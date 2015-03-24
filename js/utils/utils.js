@@ -31,3 +31,27 @@ function initializer(callback) {
 function getRandom(min, max){
 	return Math.random() * (max - min) + min;
 }
+
+function boxCircleIntersects(circle, rect)
+{ 
+	var circleDistance = new Vector2(Math.abs(circle.center.x - rect.center.x),Math.abs(circle.center.y - rect.center.y));
+	if(circleDistance.x > (rect.size.x/2 + circle.radius))
+	{
+		return false;
+	}
+	if(circleDistance.y > (rect.size.y/2 + circle.radius))
+	{
+		return false;
+	}
+
+	if(circleDistance.x <= (rect.size.x/2)) 
+	{
+		return true; 
+	}
+	if(circleDistance.y <= (rect.size.y/2))
+	{
+		return true;
+	}
+	var cornerDistance_sq = Math.pos(circleDistance.x - rect.size.x/2,2) + Math.pow(circleDistance.y - rect.size.y/2,2);
+	return (cornerDistance_sq <= Math.pow(circle.radius,2))
+}

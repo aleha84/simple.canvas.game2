@@ -1,22 +1,17 @@
 SCG2.GO.Player = function(init){
-	SCG2.GO.GO.call(this);
-
 	this.defaultInitProperties = {
 		position: new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2),
 		size: new Vector2(64,64),
 		speed: 5,
-		direction: new Vector2(1,0),
-		rotationSpeed: 0.01,
+		direction: new Vector2(0,-1),
+		rotationSpeed: 0.05,
 	}
 
 	var prop = this.initProperties(init);
-	this.id = 'player',
-	this.position = prop.position;
-	this.size = prop.size;
-	this.speed = prop.speed;
-	this.direction = prop.direction;
-	this.rotationSpeed = prop.rotationSpeed;
 
+	SCG2.GO.GO.call(this,prop);
+	
+	this.id = 'player';
 }
 
 SCG2.GO.Player.prototype = Object.create( SCG2.GO.GO.prototype );
@@ -44,13 +39,13 @@ SCG2.GO.Player.prototype.update = function(now){
 	if(SCG2.gameControls.rotateLeft)
 	{
 		this.angle -= this.rotationSpeed;
+		this.direction = this.initialDirection.rotate(this.angle,true,false);
 	}
 
 	if(SCG2.gameControls.rotateRight)
 	{
 		this.angle += this.rotationSpeed;
-		this.direction.rotate(this.angle,true,true);
-		console.log(this.angle, this.direction);
+		this.direction = this.initialDirection.rotate(this.angle,true,false);
 	}
 }
 

@@ -3,6 +3,12 @@ var SCG2 = {};
 SCG2.battlefield = {
 	width: 1024,
 	height: 768,
+	current: undefined,
+}
+
+SCG2.battleSpace = {
+	width: 2048,
+	height: 1536
 }
 
 SCG2.canvas = undefined;
@@ -63,6 +69,8 @@ SCG2.gameControls = {
 			case 68:
 				this.rotateRight = false;
 				break;
+			case 32:
+				SCG2.gameLogics.isPaused = !SCG2.gameLogics.isPaused;
 			default:
 				break;
 		}
