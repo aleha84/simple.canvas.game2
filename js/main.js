@@ -25,7 +25,7 @@ $(document).ready(function(){
 	SCG2.battlefield.current = new Box(new Vector2,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height));
 
 	SCG2.go.push(new SCG2.GO.Player());
-	for (var i = 10; i >= 0; i--) {
+	for (var i = 100; i >= 0; i--) {
 		SCG2.go.push(new SCG2.GO.DummyObject);
 	};
 	initializer(function(){

@@ -15,7 +15,7 @@ SCG2.GO.DummyObject.prototype = Object.create( SCG2.GO.GO.prototype );
 SCG2.GO.DummyObject.prototype.constructor = SCG2.GO.DummyObject;
 
 SCG2.GO.DummyObject.prototype.render = function(){ 
-	if(SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere))
+	if(SCG2.battlefield.current.isIntersectsWithBox(this.boundingBox))
 	{
 		SCG2.context.translate(this.position.x,this.position.y);
 		SCG2.context.rotate(this.angle);
@@ -32,6 +32,6 @@ SCG2.GO.DummyObject.prototype.render = function(){
 }
 
 SCG2.GO.DummyObject.prototype.update = function(now){ 
-	
+	SCG2.GO.GO.prototype.update.call(this,now);
 }
 

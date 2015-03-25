@@ -38,8 +38,8 @@ SCG2.GO.GO = function(prop){
 			this.rotationSpeed = prop.rotationSpeed;
 		}
 	}
-
-	this.boundingSphere = this.calculateBoundingSphere();
+	this.boundingBox = new Box(this.position,this.size);
+	//this.boundingSphere = this.calculateBoundingSphere();
 }
 
 SCG2.GO.GO.prototype = {
@@ -62,13 +62,15 @@ SCG2.GO.GO.prototype = {
 		}
 		return $.extend({},this.defaultInitProperties,init);
 	},
-	calculateBoundingSphere: function(){
-		var boundingSphereRadius = Math.sqrt(Math.pow(this.size.x,2)+Math.pow(this.size.y,2));
-		return new Circle(this.position,boundingSphereRadius);
-	},
+	// calculateBoundingSphere: function(){
+	// 	var boundingSphereRadius = Math.sqrt(Math.pow(this.size.x,2)+Math.pow(this.size.y,2));
+	// 	return new Circle(this.position,boundingSphereRadius);
+	// },
 
 	render: function(){ },
 
-	update: function(now){ }
+	update: function(now){ 
+		this.boundingBox.update(this.position);
+	}
 }
 
