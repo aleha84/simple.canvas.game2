@@ -29,9 +29,13 @@ SCG2.gameControls = {
 	initControlsEvents: function  () {
 		var that = this;
 		$(document).on('keydown',function(e){
+			e.preventDefault();
+			e.stopPropagation();
 			that.keyDown(e);
 		})
 		$(document).on('keyup',function(e){
+			e.preventDefault();
+			e.stopPropagation();
 			that.keyUp(e);
 		});
 	},

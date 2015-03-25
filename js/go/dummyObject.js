@@ -19,16 +19,14 @@ SCG2.GO.DummyObject.prototype.render = function(){
 	{
 		SCG2.context.translate(this.position.x,this.position.y);
 		SCG2.context.rotate(this.angle);
-		//SCG2.context.globalAlpha = 0.5;
+		
 		SCG2.context.rect(-this.size.x/2, -this.size.y/2, this.size.x/2, this.size.y/2);
 		SCG2.context.fillStyle = 'white';
 		SCG2.context.fill();
-		//SCG2.context.globalAlpha = 1;
+		
 		SCG2.context.rotate(-this.angle);
 		SCG2.context.translate(-this.position.x,-this.position.y);		
 	}
-
-
 }
 
 SCG2.GO.DummyObject.prototype.update = function(now){ 
