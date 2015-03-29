@@ -8,13 +8,15 @@ SCG2.frameCounter = {
 		begin: new Date,
 		end: new Date,
 	},
+	visibleCount: 0,
 	draw: function(){
 		SCG2.context.save();     
 		SCG2.context.fillStyle = "red";
 		SCG2.context.font = "48px serif";
-  		// SCG2.context.fillText(this.prevRate, SCG2.battlefield.width-60, 40);
-  		// SCG2.context.font = "24px serif";
-  		// SCG2.context.fillText(this.renderConsumption.end - this.renderConsumption.begin, SCG2.battlefield.width-60, 80);
+  		SCG2.context.fillText(this.prevRate, SCG2.battlefield.width-60, 40);
+  		SCG2.context.font = "24px serif";
+  		SCG2.context.fillText(this.visibleCount, SCG2.battlefield.width-60, 80);
+  		SCG2.frameCounter.visibleCount = 0;
 		SCG2.context.restore(); 
 	},
 	doWork : function(now)
@@ -37,6 +39,7 @@ SCG2.frameCounter = {
 SCG2.src = {
 	starfield: 'content/images/starfield.png',
 	debug_ship: 'content/images/debug_ship.png',
+	turret: 'content/images/turret.png',
 };
 SCG2.images = {
 }
@@ -57,11 +60,31 @@ $(document).ready(function(){
 	SCG2.gameControls.initControlsEvents();
 	SCG2.battlefield.current = new Box(new Vector2,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height));
 
-	SCG2.go.push(new SCG2.GO.Player());
+	
 	for (var i = 100; i >= 0; i--) {
 		SCG2.go.push(new SCG2.GO.DummyObject)
 	};
 	initializer(function(){
+		SCG2.Player = new SCG2.GO.Player;
+		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
+			position: new Vector2(20,0),
+			size: new Vector2(30,30),
+			img: SCG2.images.turret,
+			angle: 0,
+			clamps: { min: 0, max: degreeToRadians(180)},
+			rotationSpeed: 0.01,
+			rotationDirection: -1,
+		}));
+		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
+			position: new Vector2(-20,0),
+			size: new Vector2(30,30),
+			img: SCG2.images.turret,
+			angle: 0,
+			clamps: { min: degreeToRadians(-180), max: 0},
+			rotationSpeed: 0.01,
+			rotationDirection: 1,
+		}));
+		SCG2.go.push(SCG2.Player);
 		SCG2.animate();
 	});
 });

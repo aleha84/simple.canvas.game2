@@ -11,6 +11,8 @@ SCG2.GO.GO = function(prop){
 	this.rotationSpeed = 0;
 	this.speed = 0;
 	this.angle = 0;
+	this.displayPosition = undefined;
+	this.modules = [];
 	if(prop!=undefined)
 	{
 		if(prop.position!=undefined)
@@ -36,6 +38,10 @@ SCG2.GO.GO = function(prop){
 		if(prop.rotationSpeed!=undefined)
 		{
 			this.rotationSpeed = prop.rotationSpeed;
+		}
+		if(prop.modules!=undefined)
+		{
+			this.modules = prop.modules;
 		}
 	}
 	this.boundingBox = new Box(this.position,this.size);
@@ -67,10 +73,24 @@ SCG2.GO.GO.prototype = {
 	// 	return new Circle(this.position,boundingSphereRadius);
 	// },
 
+	addModule: function (module) {
+		module.parent = this;
+		this.modules.push(module);
+	},
+
 	render: function(){ },
 
 	update: function(now){ 
 		this.boundingBox.update(this.position);
+		if(SCG2.battlefield.current.isIntersectsWithBox(this.boundingBox))
+		{
+			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
+			SCG2.frameCounter.visibleCount++;
+		}
+		else{
+			this.displayPosition = undefined;
+		}
+		
 	}
 }
 

@@ -55,3 +55,19 @@ function boxCircleIntersects(circle, rect)
 	var cornerDistance_sq = Math.pos(circleDistance.x - rect.size.x/2,2) + Math.pow(circleDistance.y - rect.size.y/2,2);
 	return (cornerDistance_sq <= Math.pow(circle.radius,2))
 }
+
+function radiansToDegree (radians) {
+  if(radians === undefined)
+  {
+    return 0;
+  }
+  return radians * 180/Math.PI;
+}
+
+function degreeToRadians (degree) {
+  if(degree === undefined)
+  {
+    return 0;
+  }
+  return degree * Math.PI / 180;
+}

@@ -35,10 +35,20 @@ function Vector2(x,y){
 		return Math.sqrt(Math.pow(this.x,2) + Math.pow(this.y,2));
 	}
 
-	this.add = function(summand){
+	this.add = function(summand, outer){
+		if(outer === undefined)
+		{
+			outer = false;
+		}
 		if(summand instanceof Vector2){
-			this.x +=summand.x;
-			this.y +=summand.y;
+			if(outer){
+				return new Vector2(this.x + summand.x,this.y + summand.y);
+			}
+			else{
+				this.x +=summand.x;
+				this.y +=summand.y;	
+			}
+			
 		}
 	}
 
