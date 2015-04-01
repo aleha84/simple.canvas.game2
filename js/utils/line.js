@@ -36,4 +36,12 @@ function Line(prop)
 		var radius = this.begin.distance(this.end)/2;
 		return new Circle(center,radius);
 	}
+
+	this.calculateBoundingBox = function  () {
+		var topLeft = new Vector2;
+		topLeft.x = this.begin.x < this.end.x?  this.begin.x : this.end.x;
+		topLeft.y = this.begin.y < this.end.y? this.begin.y : this.end.y;
+		var size = new Vector2(Math.abs(this.end.x - this.begin.x), Math.abs(this.end.y - this.begin.x));
+		return new Box(topLeft,size);
+	}
 }

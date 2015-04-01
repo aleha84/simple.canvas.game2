@@ -44,7 +44,7 @@ SCG2.GO.GO = function(prop){
 			this.modules = prop.modules;
 		}
 	}
-	this.boundingBox = new Box(this.position,this.size);
+	this.boundingBox = this.calculeteBoundingBox();
 	this.boundingSphere = this.calculateBoundingSphere();
 }
 
@@ -71,16 +71,51 @@ SCG2.GO.GO.prototype = {
 	calculateBoundingSphere: function(){
 
 	},
+	calculeteBoundingBox: function(){
+		new Box(this.position,this.size);
+	},
 
 	addModule: function (module) {
 		module.parent = this;
 		this.modules.push(module);
+		
+
+		// for (var i = this.modules.length - 1; i >= 0; i--) {
+		// 	var moduleTopLeft = new Vector2(this.modules[i].position.x-this.modules[i].boundingSphere.radius,this.modules[i].position.y-this.modules[i].boundingSphere.radius);
+		// 	var moduleBottomRight = new Vector2(this.modules[i].position.x+this.modules[i].boundingSphere.radius,this.modules[i].position.y+this.modules[i].boundingSphere.radius);
+		// 	if(moduleTopLeft.x < topLeft.x)
+		// 	{
+		// 		topLeft.x = moduleTopLeft.x;
+		// 	}
+		// 	if(moduleTopLeft.y < topLeft.y)
+		// 	{
+		// 		topLeft.y = moduleTopLeft.y;
+		// 	}
+		// 	if(moduleBottomRight.x > bottomRight.x)
+		// 	{
+		// 		bottomRight.x = moduleBottomRight.x;
+		// 	}
+		// 	if(moduleBottomRight.y > bottomRight.y)
+		// 	{
+		// 		bottomRight.y = moduleBottomRight.y;
+		// 	}
+		// }
+
+		// this.boundingBox = new Box(topLeft,new Vector2(bottomRight.x - topLeft.x,bottomRight.y - topLeft.y));
+		this.updateBoundingBox();
+	},
+
+	updateBoundingBox: function(){
+		if(this.modules.length == 0)
+		{
+			return;
+		}
 		var topLeft = new Vector2;
 		var bottomRight = new Vector2;
-
 		for (var i = this.modules.length - 1; i >= 0; i--) {
-			var moduleTopLeft = new Vector2(this.modules[i].position.x-this.modules[i].boundingSphere.radius,this.modules[i].position.y-this.modules[i].boundingSphere.radius);
-			var moduleBottomRight = new Vector2(this.modules[i].position.x+this.modules[i].boundingSphere.radius,this.modules[i].position.y+this.modules[i].boundingSphere.radius);
+			var rotatedModulePosition = this.modules[i].position.rotate(this.angle,true,false);
+			var moduleTopLeft = new Vector2(rotatedModulePosition.x-this.modules[i].boundingSphere.radius,rotatedModulePosition.y-this.modules[i].boundingSphere.radius);
+			var moduleBottomRight = new Vector2(rotatedModulePosition.x+this.modules[i].boundingSphere.radius,rotatedModulePosition.y+this.modules[i].boundingSphere.radius);
 			if(moduleTopLeft.x < topLeft.x)
 			{
 				topLeft.x = moduleTopLeft.x;
@@ -98,19 +133,17 @@ SCG2.GO.GO.prototype = {
 				bottomRight.y = moduleBottomRight.y;
 			}
 		}
-		var center = new Vector2;//((bottomRight.x - topLeft.x)/2,(bottomRight.y - topLeft.y)/2)
-		var radius = topLeft.distance(bottomRight)/2;
 
-		this.boundingSphere = new Circle(center,radius);
+		this.boundingBox = new Box(topLeft,new Vector2(bottomRight.x - topLeft.x,bottomRight.y - topLeft.y));
 	},
 
 	render: function(){ },
 
 	update: function(now){ 
-		// if(this.boundingBox!==undefined)
-		// {
-		// 	this.boundingBox.update(this.position);
-		// }
+		if(this.boundingBox!==undefined)
+		{
+			this.boundingBox.update(this.position);
+		}
 		// if(this.boundingSphere!==undefined)
 		// {
 
@@ -123,15 +156,29 @@ SCG2.GO.GO.prototype = {
 		else{
 			this.displayPosition = undefined;
 		}
+		this.updateBoundingBox();
+		this.checkCollisions();
 		
 	},
 
-	renderBoundingSphere: function  () {
+	renderBoundingSphere: function  (fill) {
 		if(this.boundingSphere === undefined)
 		{
 			return;
 		}
-		this.boundingSphere.render();
+		this.boundingSphere.render(fill);
+	},
+
+	renderBoundingBox: function  () {
+		if(this.boundingBox === undefined)
+		{
+			return;
+		}
+		this.boundingBox.render();
+	},
+
+	checkCollisions: function(){
+
 	}
 }
 

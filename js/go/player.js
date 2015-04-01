@@ -30,18 +30,13 @@ SCG2.GO.Player.prototype.render = function(){
 	SCG2.context.rotate(this.angle);
 	SCG2.context.drawImage(SCG2.images.debug_ship,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);
 
-	// var absolutePosition = this.displayPosition.add(this.turret.displayPosition,true);
-	// SCG2.context.translate(this.turret.displayPosition.x,this.turret.displayPosition.y);
-	// SCG2.context.rotate(1);
-	// SCG2.context.drawImage(SCG2.images.turret,this.turret.size.x/-2,this.turret.size.y/-2,this.turret.size.x,this.turret.size.y);	
-	// SCG2.context.rotate(-1);
-	// SCG2.context.translate(-this.turret.displayPosition.x,-this.turret.displayPosition.y);
 	var i = this.modules.length;
 	while (i--) {
 		this.modules[i].render();
 	}
-	this.renderBoundingSphere();
+	
 	SCG2.context.rotate(-this.angle);
+	this.renderBoundingBox();
 	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 }
 
@@ -85,5 +80,7 @@ SCG2.GO.Player.prototype.update = function(now){
 			var deleted = this.modules.splice(i,1);
 		}
 	}
+
+	this.updateBoundingBox();
 }
 

@@ -28,5 +28,14 @@ function Box(topLeft,size){
 	{
 		return this.isPointInside(box.topLeft) || this.isPointInside(box.bottomRight);
 	}
+
+	this.render = function  () {
+		SCG2.context.beginPath();	
+		SCG2.context.rect(this.topLeft.x, topLeft.y, this.size.x, this.size.y);
+		SCG2.context.lineWidth = 1;
+		SCG2.context.strokeStyle = '#00FF00';
+		SCG2.context.closePath();
+		SCG2.context.stroke();
+	}
 }
 

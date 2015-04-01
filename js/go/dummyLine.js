@@ -16,17 +16,28 @@ SCG2.GO.DummyLine = function(init){
 
 	SCG2.GO.GO.call(this,prop);
 	this.position = prop.begin;
+	this.begin = prop.begin;
+	this.end = prop.end;
 	this.id = 'dummyLine_' + (SCG2.GO.DummyLine.counter++);
+	this.collided = false;
 	
+	// this.renderBoundingSphere = function  () {
+	// 	if(this.boundingSphere === undefined)
+	// 	{
+	// 		return;
+	// 	}
 
-	this.renderBoundingSphere = function  () {
-		if(this.boundingSphere === undefined)
-		{
-			return;
-		}
+	// 	this.boundingSphere.render();
+	// }
 
-		this.boundingSphere.render();
-	}
+	// this.renderBoundingBox = function  () {
+	// 	if(this.boundingBox === undefined)
+	// 	{
+	// 		return;
+	// 	}
+
+	// 	this.boundingBox.render();
+	// }
 }
 SCG2.GO.DummyLine.counter = 0;
 SCG2.GO.DummyLine.prototype = Object.create( SCG2.GO.GO.prototype );
@@ -38,7 +49,8 @@ SCG2.GO.DummyLine.prototype.render = function(){
 		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
 		SCG2.context.rotate(this.angle);
 		this.line.render();
-		this.renderBoundingSphere();
+		this.renderBoundingSphere(this.collided);
+		//this.renderBoundingBox();
 		SCG2.context.rotate(-this.angle);
 		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);		
 	}	
@@ -52,5 +64,21 @@ SCG2.GO.DummyLine.prototype.calculateBoundingSphere = function  () {
 	return this.line.calculateBoundingSphere();
 }
 
+SCG2.GO.DummyLine.prototype.calculeteBoundingBox = function  () {
+	//return this.line.calculateBoundingBox();
+}
 
+SCG2.GO.DummyLine.prototype.checkCollisions = function  () {
+	var center = new Vector2(this.begin.x +Math.abs((this.end.x - this.begin.x)/2),this.begin.y+Math.abs((this.end.y - this.begin.y)/2));
+	for (var i = SCG2.go.length - 1; i >= 0; i--) {
+		if(SCG2.go[i].id == this.id)
+		{
+			continue;
+		}
+		if(SCG2.go[i].boundingBox !== undefined)
+		{
+			this.collided = boxCircleIntersects(new Circle(center,this.boundingSphere.radius),new Box(SCG2.go[i].position.add(SCG2.go[i].boundingBox.topLeft,true),SCG2.go[i].boundingBox.size))
+		}
+	};
+}
 

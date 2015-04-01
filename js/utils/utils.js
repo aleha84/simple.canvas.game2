@@ -52,7 +52,7 @@ function boxCircleIntersects(circle, rect)
 	{
 		return true;
 	}
-	var cornerDistance_sq = Math.pos(circleDistance.x - rect.size.x/2,2) + Math.pow(circleDistance.y - rect.size.y/2,2);
+	var cornerDistance_sq = Math.pow(circleDistance.x - rect.size.x/2,2) + Math.pow(circleDistance.y - rect.size.y/2,2);
 	return (cornerDistance_sq <= Math.pow(circle.radius,2))
 }
 
