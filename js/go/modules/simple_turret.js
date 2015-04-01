@@ -31,6 +31,9 @@ SCG2.Module.SimpleTurret.prototype.render = function(){
 	SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
 	SCG2.context.rotate(this.angle);
 	SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
+
+	this.renderBoundingSphere();
+
 	SCG2.context.rotate(-this.angle);
 	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 }

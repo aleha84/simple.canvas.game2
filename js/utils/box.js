@@ -1,7 +1,7 @@
 function Box(topLeft,size){
 	this.topLeft = topLeft;
 	this.size = size;
-	//this.center = new Vector2(this.topLeft.x + (size.x/2), this.topLeft.y + (size.y/2));
+	this.center = new Vector2(this.topLeft.x + (size.x/2), this.topLeft.y + (size.y/2));
 	this.bottomRight = new Vector2(this.topLeft.x + this.size.x,this.topLeft.y+this.size.y);
 	this.update = function(topLeft,size){
 		this.topLeft = topLeft;
@@ -9,7 +9,7 @@ function Box(topLeft,size){
 		{
 			this.size = size;
 		}
-		//this.center = new Vector2(this.topLeft.x + (size.x/2), this.topLeft.y + (size.y/2));
+		this.center = new Vector2(this.topLeft.x + (this.size.x/2), this.topLeft.y + (this.size.y/2));
 		this.bottomRight = new Vector2(this.topLeft.x + this.size.x,this.topLeft.y+this.size.y);
 	}
 	this.isPointInside = function(point){
@@ -19,10 +19,10 @@ function Box(topLeft,size){
 
 	}
 
-	// this.isIntersectsWithCircle = function(circle)
-	// {
-	// 	return boxCircleIntersects(circle,this);
-	// }
+	this.isIntersectsWithCircle = function(circle)
+	{
+		return boxCircleIntersects(circle,this);
+	}
 
 	this.isIntersectsWithBox = function(box)
 	{

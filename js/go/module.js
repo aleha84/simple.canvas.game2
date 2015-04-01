@@ -9,33 +9,18 @@ SCG2.Module.Module = function(init){
 	this.img = undefined;
 	this.alive = true;
 	this.id = '';
-	
+	this.cornerPoints = [];
+	this.boundingSphere = undefined;
 	if(init!=undefined)
 	{
-		if(init.parent !== undefined)
-		{
-			this.parent = init.parent;
-		}
-		if(init.position!== undefined)
-		{
-			this.position = init.position;
-		}
-		if(init.displayPosition!== undefined)
-		{
-			this.displayPosition = init.displayPosition;
-		}
-		else{
-			this.displayPosition = this.position;
-		}
-		if(init.size!==undefined)
-		{
-			this.size = init.size;
-		}
-		if(init.img !== undefined)
-		{
-			this.img = init.img;
-		}
+		$.extend(this,init);
 	}
+	if(init.displayPosition === undefined)
+	{
+		this.displayPosition = this.position;
+	}
+
+	this.calculateBoundingSphere();
 }
 
 SCG2.Module.Module.prototype = {
@@ -45,5 +30,59 @@ SCG2.Module.Module.prototype = {
 
 	update: function (now) {
 		
+	},
+
+	calculateBoundingSphere: function  () {
+		if(this.cornerPoints.length > 2){
+			var topLeft = new Vector2;
+			var bottomRight = new Vector2;
+			for (var i = this.cornerPoints.length - 1; i >= 0; i--) {
+				if(this.cornerPoints[i].x < topLeft.x)
+				{
+					topLeft.x = this.cornerPoints[i].x;
+				}
+				if(this.cornerPoints[i].y < topLeft.y)
+				{
+					topLeft.y = this.cornerPoints[i].y;
+				}
+				if(this.cornerPoints[i].x > bottomRight.x)
+				{
+					bottomRight.x = this.cornerPoints[i].x;
+				}
+				if(this.cornerPoints[i].y > bottomRight.y)
+				{
+					bottomRight.y = this.cornerPoints[i].y;
+				}
+
+				
+			}
+			// var width = bottomRight.x - topLeft.x;
+			// var height = bottomRight.y - topLeft.y;
+			// var center = new Vector2(topLeft.x + width/2,topLeft.y + height/2);
+			// var radius = width > height? width/2 : height/2;
+
+			var center = new Vector2;//((bottomRight.x - topLeft.x)/2,(bottomRight.y - topLeft.y)/2)
+			var radius = topLeft.distance(bottomRight)/2;
+
+			this.boundingSphere = new Circle(center,radius);
+		}
+	},
+
+	renderBoundingSphere: function  () {
+		if(this.boundingSphere === undefined)
+		{
+			return;
+		}
+		this.boundingSphere.render();
+
+		SCG2.context.beginPath();
+		for (var i = this.cornerPoints.length - 1; i >= 0; i--) {
+			SCG2.context.moveTo(this.cornerPoints[i].x, this.cornerPoints[i].y);
+			SCG2.context.lineTo(this.cornerPoints[i==0?this.cornerPoints.length-1:i-1].x, this.cornerPoints[i==0?this.cornerPoints.length-1:i-1].y);
+		}
+		
+		SCG2.context.strokeStyle = '#0000FF';
+		SCG2.context.stroke();
+
 	}
 }

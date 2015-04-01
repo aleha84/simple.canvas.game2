@@ -16,6 +16,14 @@ function Vector2(x,y){
 		return new Vector2(to.x-this.x,to.y - this.y).module();
 	}
 
+	this.directionNonNormal = function(to){
+		if(!to || !(to instanceof Vector2)){
+			return new Vector2()
+		}
+
+		return new Vector2(to.x-this.x,to.y - this.y);
+	}
+
 	this.direction = function(to){
 		if(!to || !(to instanceof Vector2)){
 			return new Vector2()

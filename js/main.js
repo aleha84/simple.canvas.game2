@@ -61,9 +61,10 @@ $(document).ready(function(){
 	SCG2.battlefield.current = new Box(new Vector2,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height));
 
 	
-	for (var i = 100; i >= 0; i--) {
-		SCG2.go.push(new SCG2.GO.DummyObject)
-	};
+	// for (var i = 100; i >= 0; i--) {
+	// 	SCG2.go.push(new SCG2.GO.DummyObject)
+	// };
+	SCG2.go.push(new SCG2.GO.DummyLine({length:100}));
 	initializer(function(){
 		SCG2.Player = new SCG2.GO.Player;
 		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
@@ -74,6 +75,7 @@ $(document).ready(function(){
 			clamps: { min: 0, max: degreeToRadians(180)},
 			rotationSpeed: 0.01,
 			rotationDirection: -1,
+			cornerPoints: [new Vector2(-20,-20),new Vector2(20,-20),new Vector2(20,20),new Vector2(-20,20)]
 		}));
 		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
 			position: new Vector2(-20,0),
@@ -83,6 +85,7 @@ $(document).ready(function(){
 			clamps: { min: degreeToRadians(-180), max: 0},
 			rotationSpeed: 0.01,
 			rotationDirection: 1,
+			cornerPoints: [new Vector2(-20,-20),new Vector2(20,-20),new Vector2(20,20),new Vector2(-20,20)]
 		}));
 		SCG2.go.push(SCG2.Player);
 		SCG2.animate();

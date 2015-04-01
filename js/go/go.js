@@ -45,7 +45,7 @@ SCG2.GO.GO = function(prop){
 		}
 	}
 	this.boundingBox = new Box(this.position,this.size);
-	//this.boundingSphere = this.calculateBoundingSphere();
+	this.boundingSphere = this.calculateBoundingSphere();
 }
 
 SCG2.GO.GO.prototype = {
@@ -68,21 +68,54 @@ SCG2.GO.GO.prototype = {
 		}
 		return $.extend({},this.defaultInitProperties,init);
 	},
-	// calculateBoundingSphere: function(){
-	// 	var boundingSphereRadius = Math.sqrt(Math.pow(this.size.x,2)+Math.pow(this.size.y,2));
-	// 	return new Circle(this.position,boundingSphereRadius);
-	// },
+	calculateBoundingSphere: function(){
+
+	},
 
 	addModule: function (module) {
 		module.parent = this;
 		this.modules.push(module);
+		var topLeft = new Vector2;
+		var bottomRight = new Vector2;
+
+		for (var i = this.modules.length - 1; i >= 0; i--) {
+			var moduleTopLeft = new Vector2(this.modules[i].position.x-this.modules[i].boundingSphere.radius,this.modules[i].position.y-this.modules[i].boundingSphere.radius);
+			var moduleBottomRight = new Vector2(this.modules[i].position.x+this.modules[i].boundingSphere.radius,this.modules[i].position.y+this.modules[i].boundingSphere.radius);
+			if(moduleTopLeft.x < topLeft.x)
+			{
+				topLeft.x = moduleTopLeft.x;
+			}
+			if(moduleTopLeft.y < topLeft.y)
+			{
+				topLeft.y = moduleTopLeft.y;
+			}
+			if(moduleBottomRight.x > bottomRight.x)
+			{
+				bottomRight.x = moduleBottomRight.x;
+			}
+			if(moduleBottomRight.y > bottomRight.y)
+			{
+				bottomRight.y = moduleBottomRight.y;
+			}
+		}
+		var center = new Vector2;//((bottomRight.x - topLeft.x)/2,(bottomRight.y - topLeft.y)/2)
+		var radius = topLeft.distance(bottomRight)/2;
+
+		this.boundingSphere = new Circle(center,radius);
 	},
 
 	render: function(){ },
 
 	update: function(now){ 
-		this.boundingBox.update(this.position);
-		if(SCG2.battlefield.current.isIntersectsWithBox(this.boundingBox))
+		// if(this.boundingBox!==undefined)
+		// {
+		// 	this.boundingBox.update(this.position);
+		// }
+		// if(this.boundingSphere!==undefined)
+		// {
+
+		// }
+		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.boundingBox)) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere)))
 		{
 			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
 			SCG2.frameCounter.visibleCount++;
@@ -91,6 +124,14 @@ SCG2.GO.GO.prototype = {
 			this.displayPosition = undefined;
 		}
 		
+	},
+
+	renderBoundingSphere: function  () {
+		if(this.boundingSphere === undefined)
+		{
+			return;
+		}
+		this.boundingSphere.render();
 	}
 }
 

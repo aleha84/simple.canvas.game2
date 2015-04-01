@@ -40,7 +40,7 @@ SCG2.GO.Player.prototype.render = function(){
 	while (i--) {
 		this.modules[i].render();
 	}
-
+	this.renderBoundingSphere();
 	SCG2.context.rotate(-this.angle);
 	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 }
