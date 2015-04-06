@@ -29,9 +29,13 @@ function Box(topLeft,size){
 		return this.isPointInside(box.topLeft) || this.isPointInside(box.bottomRight);
 	}
 
-	this.render = function  () {
+	this.render = function  (fill) {
 		SCG2.context.beginPath();	
 		SCG2.context.rect(this.topLeft.x, topLeft.y, this.size.x, this.size.y);
+		if(fill){
+			SCG2.context.fillStyle = 'rgba(0, 255, 0, 0.5)';
+			SCG2.context.fill();	
+		}
 		SCG2.context.lineWidth = 1;
 		SCG2.context.strokeStyle = '#00FF00';
 		SCG2.context.closePath();

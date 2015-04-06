@@ -13,6 +13,7 @@ SCG2.GO.GO = function(prop){
 	this.angle = 0;
 	this.displayPosition = undefined;
 	this.modules = [];
+	this.collided = false;
 	if(prop!=undefined)
 	{
 		if(prop.position!=undefined)
@@ -78,30 +79,7 @@ SCG2.GO.GO.prototype = {
 	addModule: function (module) {
 		module.parent = this;
 		this.modules.push(module);
-		
 
-		// for (var i = this.modules.length - 1; i >= 0; i--) {
-		// 	var moduleTopLeft = new Vector2(this.modules[i].position.x-this.modules[i].boundingSphere.radius,this.modules[i].position.y-this.modules[i].boundingSphere.radius);
-		// 	var moduleBottomRight = new Vector2(this.modules[i].position.x+this.modules[i].boundingSphere.radius,this.modules[i].position.y+this.modules[i].boundingSphere.radius);
-		// 	if(moduleTopLeft.x < topLeft.x)
-		// 	{
-		// 		topLeft.x = moduleTopLeft.x;
-		// 	}
-		// 	if(moduleTopLeft.y < topLeft.y)
-		// 	{
-		// 		topLeft.y = moduleTopLeft.y;
-		// 	}
-		// 	if(moduleBottomRight.x > bottomRight.x)
-		// 	{
-		// 		bottomRight.x = moduleBottomRight.x;
-		// 	}
-		// 	if(moduleBottomRight.y > bottomRight.y)
-		// 	{
-		// 		bottomRight.y = moduleBottomRight.y;
-		// 	}
-		// }
-
-		// this.boundingBox = new Box(topLeft,new Vector2(bottomRight.x - topLeft.x,bottomRight.y - topLeft.y));
 		this.updateBoundingBox();
 	},
 
@@ -169,16 +147,35 @@ SCG2.GO.GO.prototype = {
 		this.boundingSphere.render(fill);
 	},
 
-	renderBoundingBox: function  () {
+	renderBoundingBox: function  (fill) {
 		if(this.boundingBox === undefined)
 		{
 			return;
 		}
-		this.boundingBox.render();
+		this.boundingBox.render(fill);
 	},
 
 	checkCollisions: function(){
 
+	},
+
+	checkCollisionWuthLine: function(line)
+	{
+		if(this.boundingBox !== undefined)
+		{
+			this.collided = //boxCircleIntersects(new Circle(center,this.boundingSphere.radius),new Box(this.position.add(this.boundingBox.topLeft,true),this.boundingBox.size))
+				segmentIntersectBox(line, new Box(this.position.add(this.boundingBox.topLeft,true),this.boundingBox.size));
+			if(this.modules.length > 0)
+			{
+				for (var j = this.modules.length - 1; j >= 0; j--) {
+					if(this.modules[j].boundingSphere !== undefined)
+					{
+						this.modules[j].collided = segmentIntersectCircle(line, new Circle(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),this.modules[j].boundingSphere.radius));
+					}
+					
+				};
+			}
+		}
 	}
 }
 

@@ -60,8 +60,31 @@ function Vector2(x,y){
 		}
 	}
 
+	this.substract = function(subtrahend,outer)
+	{
+		if(outer === undefined)
+		{
+			outer = false;
+		}
+		if(subtrahend instanceof Vector2){
+			if(outer){
+				return new Vector2(this.x - subtrahend.x,this.y - subtrahend.y);
+			}
+			else{
+				this.x -=subtrahend.x;
+				this.y -=subtrahend.y;	
+			}			
+		}
+		return new Vector2;
+	}
+
 	this.mul = function(coef){
 		return new Vector2(this.x*coef,this.y*coef);
+	}
+
+	this.dot = function(to)
+	{
+		return this.mulVector(to);
 	}
 
 	this.mulVector = function(to){

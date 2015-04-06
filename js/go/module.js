@@ -21,6 +21,7 @@ SCG2.Module.Module = function(init){
 	}
 
 	this.calculateBoundingSphere();
+	this.collided = false;
 }
 
 SCG2.Module.Module.prototype = {
@@ -68,12 +69,12 @@ SCG2.Module.Module.prototype = {
 		}
 	},
 
-	renderBoundingSphere: function  () {
+	renderBoundingSphere: function  (fill) {
 		if(this.boundingSphere === undefined)
 		{
 			return;
 		}
-		this.boundingSphere.render();
+		this.boundingSphere.render(fill);
 
 		SCG2.context.beginPath();
 		for (var i = this.cornerPoints.length - 1; i >= 0; i--) {

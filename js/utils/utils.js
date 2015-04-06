@@ -56,6 +56,89 @@ function boxCircleIntersects(circle, rect)
 	return (cornerDistance_sq <= Math.pow(circle.radius,2))
 }
 
+function segmentIntersectBox(segment,box)
+  {
+    var minX = segment.begin.x;
+    var maxX = segment.end.x;
+    if(segment.begin.x > segment.end.x)
+    {
+      minX = segment.end.x;
+      maxX = segment.begin.x;
+    }
+   if(maxX > box.bottomRight.x)
+    {
+      maxX = box.bottomRight.x;
+    }
+    if(minX < box.topLeft.x)
+    {
+      minX = box.topLeft.x;
+    }
+    if(minX > maxX) 
+    {
+      return false;
+    }
+    var minY = segment.begin.y;
+    var maxY = segment.end.y;
+    var dx = segment.end.x - segment.begin.x;
+    if(Math.abs(dx) > 0.0000001)
+    {
+      var a = (segment.end.y - segment.begin.y) / dx;
+      var b = segment.begin.y - a * segment.begin.x;
+      minY = a * minX + b;
+      maxY = a * maxX + b;
+    }
+    if(minY > maxY)
+    {
+      var tmp = maxY;
+      maxY = minY;
+      minY = tmp;
+    }
+    if(maxY > box.bottomRight.y)
+    {
+      maxY = box.bottomRight.y;
+    }
+    if(minY < box.topLeft.y)
+    {
+      minY = box.topLeft.y;
+    }
+    if(minY > maxY) // If Y-projections do not intersect return false
+    {
+      return false;
+    }
+    return true;
+  }
+
+function segmentIntersectCircle(segment,circle)
+{
+    // return ((circle.center.x - circle.radius <= segment.begin.x && segment.begin.x <= circle.center.x + circle.radius ) && (circle.center.y - circle.radius <= segment.begin.y && segment.begin.y <= circle.center.y + circle.radius )
+    //   || (circle.center.x - circle.radius <= segment.end.x && segment.end.x <= circle.center.x + circle.radius ) && (circle.center.y - circle.radius <= segment.end.y && segment.end.y <= circle.center.y + circle.radius ));
+    var d = segment.end.substract(segment.begin,true);
+    var f = segment.begin.substract(circle.center,true);
+
+    var a = d.dot(d);
+    var b = 2*f.dot(d);
+    var c = f.dot(f) - Math.pow(circle.radius,2);
+    var discriminant = b*b-4*a*c;
+    if(discriminant<0)
+    {
+      return false;
+    }
+
+    discriminant = Math.sqrt(discriminant);
+    var t1 = (-b - discriminant)/(2*a);
+    var t2 = (-b + discriminant)/(2*a);
+
+    if(t1 >= 0 && t1 <=1)
+    {
+      return true;
+    }
+    if(t2>=0 && t2 <=1)
+    {
+      return true;
+    }
+    return false;
+}
+
 function radiansToDegree (radians) {
   if(radians === undefined)
   {

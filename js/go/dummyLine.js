@@ -19,7 +19,7 @@ SCG2.GO.DummyLine = function(init){
 	this.begin = prop.begin;
 	this.end = prop.end;
 	this.id = 'dummyLine_' + (SCG2.GO.DummyLine.counter++);
-	this.collided = false;
+	
 	
 	// this.renderBoundingSphere = function  () {
 	// 	if(this.boundingSphere === undefined)
@@ -70,15 +70,13 @@ SCG2.GO.DummyLine.prototype.calculeteBoundingBox = function  () {
 
 SCG2.GO.DummyLine.prototype.checkCollisions = function  () {
 	var center = new Vector2(this.begin.x +Math.abs((this.end.x - this.begin.x)/2),this.begin.y+Math.abs((this.end.y - this.begin.y)/2));
+	var line = new Line({begin: this.begin, end: this.end});
 	for (var i = SCG2.go.length - 1; i >= 0; i--) {
 		if(SCG2.go[i].id == this.id)
 		{
 			continue;
 		}
-		if(SCG2.go[i].boundingBox !== undefined)
-		{
-			this.collided = boxCircleIntersects(new Circle(center,this.boundingSphere.radius),new Box(SCG2.go[i].position.add(SCG2.go[i].boundingBox.topLeft,true),SCG2.go[i].boundingBox.size))
-		}
+		SCG2.go[i].checkCollisionWuthLine(line);
 	};
 }
 
