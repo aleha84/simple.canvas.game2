@@ -22,6 +22,7 @@ SCG2.Module.Module = function(init){
 
 	this.calculateBoundingSphere();
 	this.collided = false;
+	this.collidedSegmentIndex = -1;
 }
 
 SCG2.Module.Module.prototype = {
@@ -76,14 +77,19 @@ SCG2.Module.Module.prototype = {
 		}
 		this.boundingSphere.render(fill);
 
-		SCG2.context.beginPath();
+		
 		for (var i = this.cornerPoints.length - 1; i >= 0; i--) {
+			SCG2.context.beginPath();
 			SCG2.context.moveTo(this.cornerPoints[i].x, this.cornerPoints[i].y);
 			SCG2.context.lineTo(this.cornerPoints[i==0?this.cornerPoints.length-1:i-1].x, this.cornerPoints[i==0?this.cornerPoints.length-1:i-1].y);
+			SCG2.context.strokeStyle = '#0000FF';
+			SCG2.context.lineWidth = 1;
+			if(this.collidedSegmentIndex == i)
+			{
+				SCG2.context.lineWidth = 3;
+				SCG2.context.strokeStyle = '#000000';
+			}
+			SCG2.context.stroke();
 		}
-		
-		SCG2.context.strokeStyle = '#0000FF';
-		SCG2.context.stroke();
-
 	}
 }

@@ -139,6 +139,33 @@ function segmentIntersectCircle(segment,circle)
     return false;
 }
 
+function segmentsIntersection(line1, line2)
+{
+  var CmP = line1.begin.directionNonNormal(line2.begin);
+  var r = line1.begin.directionNonNormal(line1.end);
+  var s = line2.begin.directionNonNormal(line2.end);
+
+  var CmPxr = CmP.x * r.y - CmP.y*r.x;
+  var CmPxs = CmP.x * s.y - CmP.y * s.x;
+  var rxs = r.x * s.y - r.y*s.x;
+
+  if(CmPxr == 0)
+  {
+    return ((line2.begin.x - line1.begin.x < 0) != (line2.begin.x - line1.end.x < 0)) || ((line2.begin.y - line1.begin.y < 0) != (line2.begin.y - line1.end.y < 0));
+  }
+
+  if(rxs == 0)
+  {
+    return false;
+  }
+
+  var rxsr = 1.0/rxs;
+  var t = CmPxs * rxsr;
+  var u = CmPxr * rxsr;
+
+  return (t >= 0) && (t <= 1) && (u >= 0) && (u <= 1);
+}
+
 function radiansToDegree (radians) {
   if(radians === undefined)
   {
