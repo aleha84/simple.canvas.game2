@@ -33,6 +33,11 @@ SCG2.Module.SimpleTurret.prototype.render = function(){
 	SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
 
 	this.renderBoundingSphere(this.collided);
+	for (var i = this.collisionPoints.length - 1; i >= 0; i--) {
+		var c = new Circle(this.collisionPoints[i],5);
+		c.render();
+	};
+
 
 	SCG2.context.rotate(-this.angle);
 	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);

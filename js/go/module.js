@@ -22,7 +22,8 @@ SCG2.Module.Module = function(init){
 
 	this.calculateBoundingSphere();
 	this.collided = false;
-	this.collidedSegmentIndex = -1;
+	this.collidedSegmentIndices = [];
+	this.collisionPoints = [];
 }
 
 SCG2.Module.Module.prototype = {
@@ -84,7 +85,7 @@ SCG2.Module.Module.prototype = {
 			SCG2.context.lineTo(this.cornerPoints[i==0?this.cornerPoints.length-1:i-1].x, this.cornerPoints[i==0?this.cornerPoints.length-1:i-1].y);
 			SCG2.context.strokeStyle = '#0000FF';
 			SCG2.context.lineWidth = 1;
-			if(this.collidedSegmentIndex == i)
+			if(this.collidedSegmentIndices.indexOf(i)!=-1)
 			{
 				SCG2.context.lineWidth = 3;
 				SCG2.context.strokeStyle = '#000000';

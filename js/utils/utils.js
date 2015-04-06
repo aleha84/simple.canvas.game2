@@ -139,6 +139,33 @@ function segmentIntersectCircle(segment,circle)
     return false;
 }
 
+function segmentsIntersectionVector2(line1, line2)
+{
+  var x1 = line1.begin.x;
+  var x2 = line1.end.x;
+  var y1 = line1.begin.y;
+  var y2 = line1.end.y;
+  var x3 = line2.begin.x;
+  var x4 = line2.end.x;
+  var y3 = line2.begin.y;
+  var y4 = line2.end.y;
+
+  var d = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+  if(d == 0)
+  {
+    return undefined;
+  }
+
+  var xi = ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+  var yi = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+
+  var p = new Vector2(xi,yi);
+  if (xi < Math.min(x1,x2) || xi > Math.max(x1,x2)) return undefined;
+  if (xi < Math.min(x3,x4) || xi > Math.max(x3,x4)) return undefined;
+
+  return p;
+}
+
 function segmentsIntersection(line1, line2)
 {
   var CmP = line1.begin.directionNonNormal(line2.begin);
