@@ -172,20 +172,27 @@ SCG2.GO.GO.prototype = {
 							this.modules[j].collided = segmentIntersectCircle(line, new Circle(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),this.modules[j].boundingSphere.radius));
 							if(this.modules[j].collided){
 								if(this.modules[j].cornerPoints.length > 1){
-									this.modules[j].collidedSegmentIndex = -1; //reset index
-
-									//var relativeToModuleLine = new Line({begin:line.begin.substract(this.position,true).substract(tghis), end:});
+									this.modules[j].collidedSegmentIndices = []; //reset index
+									this.modules[j].collisionPoints = [];
+									var relativeToModuleLine = new Line({
+										begin:line.begin.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false), 
+										end:line.end.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false)
+									});
 									for (var k= this.modules[j].cornerPoints.length - 1; k >= 0; k--) {
 
-										var l = new Line({begin: this.modules[j].cornerPoints[k].rotate(this.modules[j].angle,true,false).add(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),true),
-											end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1].rotate(this.modules[j].angle,true,false).add(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),true)});
+										//var l = new Line({begin: this.modules[j].cornerPoints[k].rotate(this.modules[j].angle,true,false).add(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),true),
+										//	end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1].rotate(this.modules[j].angle,true,false).add(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),true)});
 
-										var collided = segmentsIntersection(line, l);
+										var l = new Line({begin: this.modules[j].cornerPoints[k], end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1]});
+
+										var collided = segmentsIntersectionVector2(relativeToModuleLine,l);//segmentsIntersection(line, l);
 										if(collided)
 										{
-											this.modules[j].collidedSegmentIndex = k;
-											console.log(k);
+											this.modules[j].collisionPoints.push(collided);
+										// 	//this.modules[j].collidedSegmentIndices.push(k);
+										 	
 										}
+										console.log(this.modules[j].collisionPoints.length);
 									};
 								}
 							}
