@@ -36,7 +36,11 @@ SCG2.GO.Player.prototype.render = function(){
 	}
 	
 	SCG2.context.rotate(-this.angle);
-	this.renderBoundingBox(this.collided);
+	if(SCG2.gameLogics.drawBoundings)
+	{
+		this.renderBoundingBox(this.collided);	
+	}
+	
 	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 }
 

@@ -162,7 +162,8 @@ function segmentsIntersectionVector2(line1, line2)
   var p = new Vector2(xi,yi);
   if (xi < Math.min(x1,x2) || xi > Math.max(x1,x2)) return undefined;
   if (xi < Math.min(x3,x4) || xi > Math.max(x3,x4)) return undefined;
-
+  if (yi < Math.min(y1,y2) || yi > Math.max(y1,y2)) return undefined; 
+  if (yi < Math.min(y3,y4) || yi > Math.max(y3,y4)) return undefined;
   return p;
 }
 

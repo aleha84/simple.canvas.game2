@@ -64,6 +64,7 @@ $(document).ready(function(){
 	// for (var i = 100; i >= 0; i--) {
 	// 	SCG2.go.push(new SCG2.GO.DummyObject)
 	// };
+	
 	SCG2.go.push(new SCG2.GO.DummyLine({length:100}));
 	initializer(function(){
 		SCG2.Player = new SCG2.GO.Player;

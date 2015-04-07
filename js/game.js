@@ -16,6 +16,7 @@ SCG2.context = undefined;
 SCG2.gameLogics = {
 	isPaused: false,
 	gameOver: false,
+	drawBoundings: true
 }
 
 //main game objects array

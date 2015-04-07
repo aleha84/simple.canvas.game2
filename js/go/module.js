@@ -72,7 +72,7 @@ SCG2.Module.Module.prototype = {
 	},
 
 	renderBoundingSphere: function  (fill) {
-		if(this.boundingSphere === undefined)
+		if(!SCG2.gameLogics.drawBoundings || this.boundingSphere === undefined)
 		{
 			return;
 		}

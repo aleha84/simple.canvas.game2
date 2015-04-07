@@ -140,7 +140,7 @@ SCG2.GO.GO.prototype = {
 	},
 
 	renderBoundingSphere: function  (fill) {
-		if(this.boundingSphere === undefined)
+		if(!SCG2.gameLogics.drawBoundings || this.boundingSphere === undefined)
 		{
 			return;
 		}
@@ -148,7 +148,7 @@ SCG2.GO.GO.prototype = {
 	},
 
 	renderBoundingBox: function  (fill) {
-		if(this.boundingBox === undefined)
+		if(!SCG2.gameLogics.drawBoundings || this.boundingBox === undefined)
 		{
 			return;
 		}
@@ -179,20 +179,13 @@ SCG2.GO.GO.prototype = {
 										end:line.end.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false)
 									});
 									for (var k= this.modules[j].cornerPoints.length - 1; k >= 0; k--) {
-
-										//var l = new Line({begin: this.modules[j].cornerPoints[k].rotate(this.modules[j].angle,true,false).add(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),true),
-										//	end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1].rotate(this.modules[j].angle,true,false).add(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),true)});
-
 										var l = new Line({begin: this.modules[j].cornerPoints[k], end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1]});
 
-										var collided = segmentsIntersectionVector2(relativeToModuleLine,l);//segmentsIntersection(line, l);
+										var collided = segmentsIntersectionVector2(relativeToModuleLine,l);
 										if(collided)
 										{
 											this.modules[j].collisionPoints.push(collided);
-										// 	//this.modules[j].collidedSegmentIndices.push(k);
-										 	
 										}
-										console.log(this.modules[j].collisionPoints.length);
 									};
 								}
 							}

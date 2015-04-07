@@ -49,7 +49,10 @@ SCG2.GO.DummyLine.prototype.render = function(){
 		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
 		SCG2.context.rotate(this.angle);
 		this.line.render();
-		this.renderBoundingSphere(this.collided);
+		if(SCG2.gameLogics.drawBoundings)
+		{
+			this.renderBoundingSphere(this.collided);	
+		}
 		//this.renderBoundingBox();
 		SCG2.context.rotate(-this.angle);
 		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);		
