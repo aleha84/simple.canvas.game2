@@ -192,8 +192,13 @@ SCG2.GO.GO.prototype = {
 
 	},
 
-	checkCollisionWuthLine: function(line)
+	checkCollisionWuthLine: function(line, secondTry)
 	{
+		if(secondTry === undefined)
+		{
+			secondTry = true;
+		}
+
 		if(this.boundingBox !== undefined)
 		{
 			this.collided = //boxCircleIntersects(new Circle(center,this.boundingSphere.radius),new Box(this.position.add(this.boundingBox.topLeft,true),this.boundingBox.size))
@@ -211,15 +216,29 @@ SCG2.GO.GO.prototype = {
 										begin:line.begin.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false), 
 										end:line.end.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false)
 									});
+
+									var lDirection = relativeToModuleLine.begin.direction(relativeToModuleLine.end);
+									var secondTryDelta = lDirection.mul(relativeToModuleLine.begin.distance(relativeToModuleLine.end)/5);
+									var relativeToModuleLine2 = new Line({begin:relativeToModuleLine.begin, end:relativeToModuleLine.end.add(secondTryDelta,true)});
+									var closestCollision  = undefined 
 									for (var k= this.modules[j].cornerPoints.length - 1; k >= 0; k--) {
 										var l = new Line({begin: this.modules[j].cornerPoints[k], end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1]});
 
-										var collided = segmentsIntersectionVector2(relativeToModuleLine,l);
+										var collided = segmentsIntersectionVector2(relativeToModuleLine,l) || segmentsIntersectionVector2(relativeToModuleLine2,l);
 										if(collided)
 										{
-											this.modules[j].collisionPoints.push(collided);
+											var distance = l.begin.distance(collided);
+											if(closestCollision === undefined || closestCollision.distance > distance)
+											{
+												closestCollision = {collision: collided, distance: distance};
+											}
+											//this.modules[j].collisionPoints.push(collided);
 										}
 									};
+									if(closestCollision!==undefined)
+									{
+										return closestCollision;		
+									}
 								}
 							}
 						}

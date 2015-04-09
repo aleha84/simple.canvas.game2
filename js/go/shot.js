@@ -15,9 +15,8 @@ SCG2.GO.Shot = function(init){
 	}
 
 	this.defaultInitProperties = {
-		speed : 5,
+		speed : 20,
 		angle: 0,
-		length: 20,
 		color: '#ff0000',
 		timeToLive: 6000,
 		// begin: new Vector2(100,100),
@@ -28,7 +27,7 @@ SCG2.GO.Shot = function(init){
 	
 	this.color = prop.color;
 	this.direction = prop.direction;	
-	this.length = prop.length;
+	this.length = prop.length === undefined? prop.speed:prop.length;
 	this.timeToLive = prop.timeToLive;
 	this.line = new Line({begin: new Vector2, end: new Vector2().add(this.direction.mul(this.length),true), color: this.color});
 
@@ -76,7 +75,12 @@ SCG2.GO.Shot.prototype.checkCollisions = function  () {
 		{
 			continue;
 		}
-		SCG2.go[i].checkCollisionWuthLine(line);
+		var collided = SCG2.go[i].checkCollisionWuthLine(line);
+		if(collided)
+		{
+			//console.log(collided);
+			this.alive = false;
+		}
 	};
 }
 
