@@ -43,19 +43,10 @@ SCG2.GO.DummyLine.counter = 0;
 SCG2.GO.DummyLine.prototype = Object.create( SCG2.GO.GO.prototype );
 SCG2.GO.DummyLine.prototype.constructor = SCG2.GO.DummyLine;
 
-SCG2.GO.DummyLine.prototype.render = function(){ 
+SCG2.GO.DummyLine.prototype.internalRender = function(){ 
 	if(this.displayPosition!==undefined)
 	{
-		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
-		SCG2.context.rotate(this.angle);
 		this.line.render();
-		if(SCG2.gameLogics.drawBoundings)
-		{
-			this.renderBoundingSphere(this.collided);	
-		}
-		//this.renderBoundingBox();
-		SCG2.context.rotate(-this.angle);
-		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);		
 	}	
 }
 

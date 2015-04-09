@@ -25,23 +25,13 @@ SCG2.GO.Player = function(init){
 SCG2.GO.Player.prototype = Object.create( SCG2.GO.GO.prototype );
 SCG2.GO.Player.prototype.constructor = SCG2.GO.Player;
 
-SCG2.GO.Player.prototype.render = function(){ 
-	SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
-	SCG2.context.rotate(this.angle);
+SCG2.GO.Player.prototype.internalRender = function(){ 
 	SCG2.context.drawImage(SCG2.images.debug_ship,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);
 
 	var i = this.modules.length;
 	while (i--) {
 		this.modules[i].render();
 	}
-	
-	SCG2.context.rotate(-this.angle);
-	if(SCG2.gameLogics.drawBoundings)
-	{
-		this.renderBoundingBox(this.collided);	
-	}
-	
-	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 }
 
 SCG2.GO.Player.prototype.update = function(now){ 

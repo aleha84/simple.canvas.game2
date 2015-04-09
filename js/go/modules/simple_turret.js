@@ -23,13 +23,7 @@ SCG2.Module.SimpleTurret.prototype = Object.create( SCG2.Module.Module.prototype
 SCG2.Module.SimpleTurret.prototype.constructor = SCG2.Module.SimpleTurret;
 SCG2.Module.SimpleTurret.counter = 0;
 
-SCG2.Module.SimpleTurret.prototype.render = function(){ 
-	if(this.img === undefined)
-	{
-		return;
-	}
-	SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
-	SCG2.context.rotate(this.angle);
+SCG2.Module.SimpleTurret.prototype.innerRender = function(){ 
 	SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
 
 	if(SCG2.gameLogics.drawBoundings)
@@ -41,10 +35,6 @@ SCG2.Module.SimpleTurret.prototype.render = function(){
 		var c = new Circle(this.collisionPoints[i],5);
 		c.render();
 	};
-
-
-	SCG2.context.rotate(-this.angle);
-	SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 }
 
 SCG2.Module.SimpleTurret.prototype.update = function(now){ 

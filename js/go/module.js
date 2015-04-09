@@ -29,7 +29,23 @@ SCG2.Module.Module = function(init){
 SCG2.Module.Module.prototype = {
 	constructor: SCG2.Module.Module,
 
-	render: function(){},
+	render: function(){
+		if(this.img === undefined)
+		{
+			return;
+		}
+		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
+		SCG2.context.rotate(this.angle);
+
+		this.innerRender();
+
+		SCG2.context.rotate(-this.angle);
+		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
+	},
+
+	innerRender: function(){
+
+	},
 
 	update: function (now) {
 		

@@ -47,6 +47,7 @@ SCG2.GO.GO = function(prop){
 	}
 	this.boundingBox = this.calculeteBoundingBox();
 	this.boundingSphere = this.calculateBoundingSphere();
+	this.creationTime = new Date;
 }
 
 SCG2.GO.GO.prototype = {
@@ -115,18 +116,41 @@ SCG2.GO.GO.prototype = {
 		this.boundingBox = new Box(topLeft,new Vector2(bottomRight.x - topLeft.x,bottomRight.y - topLeft.y));
 	},
 
-	render: function(){ },
+	render: function(){ 
+		if(this.displayPosition===undefined)
+		{
+			return;
+		}
+		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
+		SCG2.context.rotate(this.angle);
+		
+		this.internalRender();
+
+		SCG2.context.rotate(-this.angle);
+		if(SCG2.gameLogics.drawBoundings)
+		{
+			this.renderBoundingBox(this.collided);	
+			this.renderBoundingSphere(this.collided);	
+		}
+		
+		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
+	},
+
+	internalRender: function(){
+
+	},
 
 	update: function(now){ 
-		if(this.boundingBox!==undefined)
-		{
-			this.boundingBox.update(this.position);
-		}
+		this.updateBoundingBox();
+		// if(this.boundingBox!==undefined)
+		// {
+		// 	this.boundingBox.update(this.position);
+		// }
 		// if(this.boundingSphere!==undefined)
 		// {
 
 		// }
-		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.boundingBox)) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere)))
+		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere)))
 		{
 			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
 			SCG2.frameCounter.visibleCount++;
@@ -137,6 +161,15 @@ SCG2.GO.GO.prototype = {
 		this.updateBoundingBox();
 		this.checkCollisions();
 		
+	},
+
+	absolutBoundingBox: function(){
+		if(this.boundingBox=== undefined)
+		{
+			throw 'boundingBox Undefined';
+		}
+
+		return new Box(this.boundingBox.topLeft.add(this.position,true),this.boundingBox.size);
 	},
 
 	renderBoundingSphere: function  (fill) {

@@ -65,7 +65,10 @@ $(document).ready(function(){
 	// 	SCG2.go.push(new SCG2.GO.DummyObject)
 	// };
 	
-	SCG2.go.push(new SCG2.GO.DummyLine({length:100}));
+	//SCG2.go.push(new SCG2.GO.DummyLine({length:100}));
+	setInterval(function(){
+		SCG2.go.push(new SCG2.GO.Shot({position:new Vector2(100,100),direction: new Vector2(1,0)}));
+	},2000);
 	initializer(function(){
 		SCG2.Player = new SCG2.GO.Player;
 		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
