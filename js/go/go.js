@@ -141,15 +141,16 @@ SCG2.GO.GO.prototype = {
 	},
 
 	update: function(now){ 
+		
+		var i = this.modules.length;
+		while (i--) {
+			this.modules[i].update(now);
+			if(!this.modules[i].alive){
+				var deleted = this.modules.splice(i,1);
+			}
+		}
 		this.updateBoundingBox();
-		// if(this.boundingBox!==undefined)
-		// {
-		// 	this.boundingBox.update(this.position);
-		// }
-		// if(this.boundingSphere!==undefined)
-		// {
 
-		// }
 		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere)))
 		{
 			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
@@ -158,9 +159,14 @@ SCG2.GO.GO.prototype = {
 		else{
 			this.displayPosition = undefined;
 		}
-		this.updateBoundingBox();
+		
 		this.checkCollisions();
 		
+		this.internalUpdate(now);
+	},
+
+	internalUpdate: function(){
+
 	},
 
 	absolutBoundingBox: function(){

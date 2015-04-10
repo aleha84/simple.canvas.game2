@@ -40,6 +40,7 @@ SCG2.src = {
 	starfield: 'content/images/starfield.png',
 	debug_ship: 'content/images/debug_ship.png',
 	turret: 'content/images/turret.png',
+	platformBase: 'content/images/platformBase.png',
 };
 SCG2.images = {
 }
@@ -66,9 +67,11 @@ $(document).ready(function(){
 	// };
 	
 	//SCG2.go.push(new SCG2.GO.DummyLine({length:100}));
-	setInterval(function(){
-		SCG2.go.push(new SCG2.GO.Shot({position:new Vector2(100,100),direction: new Vector2(1,0)}));
-	},2000);
+	// setInterval(function(){
+	// 	SCG2.go.push(new SCG2.GO.Shot({position:new Vector2(100,100),direction: new Vector2(1,0)}));
+	// },2000);
+	
+	
 	initializer(function(){
 		SCG2.Player = new SCG2.GO.Player;
 		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
@@ -79,7 +82,6 @@ $(document).ready(function(){
 			clamps: { min: 0, max: degreeToRadians(180)},
 			rotationSpeed: 0.01,
 			rotationDirection: -1,
-			cornerPoints: [new Vector2(-20,-20),new Vector2(20,-20),new Vector2(20,20),new Vector2(-20,20)]
 		}));
 		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
 			position: new Vector2(-20,0),
@@ -89,9 +91,9 @@ $(document).ready(function(){
 			clamps: { min: degreeToRadians(-180), max: 0},
 			rotationSpeed: 0.01,
 			rotationDirection: 1,
-			cornerPoints: [new Vector2(-20,-20),new Vector2(20,-20),new Vector2(20,20),new Vector2(-20,20)]
 		}));
 		SCG2.go.push(SCG2.Player);
+		SCG2.go.push(new SCG2.GO.StaticPlatform({position:new Vector2(100,100)}));
 		SCG2.animate();
 	});
 });

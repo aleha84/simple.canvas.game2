@@ -26,7 +26,8 @@ function Box(topLeft,size){
 
 	this.isIntersectsWithBox = function(box)
 	{
-		return this.isPointInside(box.topLeft) || this.isPointInside(box.bottomRight);
+		//return this.isPointInside(box.topLeft) || this.isPointInside(box.bottomRight);
+		return boxIntersectsBox(this,box);
 	}
 
 	this.render = function  (fill) {

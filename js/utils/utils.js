@@ -32,6 +32,12 @@ function getRandom(min, max){
 	return Math.random() * (max - min) + min;
 }
 
+function boxIntersectsBox(a,b)
+{
+  return (Math.abs(a.center.x - b.center.x) * 2 < (a.size.x + b.size.x)) &&
+         (Math.abs(a.center.y - b.center.y) * 2 < (a.size.y + b.size.y));
+}
+
 function boxCircleIntersects(circle, rect)
 { 
 	var circleDistance = new Vector2(Math.abs(circle.center.x - rect.center.x),Math.abs(circle.center.y - rect.center.y));

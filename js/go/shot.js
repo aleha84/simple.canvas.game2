@@ -47,8 +47,7 @@ SCG2.GO.Shot.prototype.internalRender = function(){
 	}	
 }
 
-SCG2.GO.Shot.prototype.update = function(now){ 
-	SCG2.GO.GO.prototype.update.call(this,now);
+SCG2.GO.Shot.prototype.internalUpdate = function(now){ 
 	if(now - this.creationTime > this.timeToLive)
 	{
 		this.alive = false;
