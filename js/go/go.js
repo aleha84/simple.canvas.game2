@@ -14,6 +14,7 @@ SCG2.GO.GO = function(prop){
 	this.displayPosition = undefined;
 	this.modules = [];
 	this.collided = false;
+	this.selected = false;
 	if(prop!=undefined)
 	{
 		if(prop.position!=undefined)
@@ -132,6 +133,10 @@ SCG2.GO.GO.prototype = {
 			this.renderBoundingBox(this.collided);	
 			this.renderBoundingSphere(this.collided);	
 		}
+		if(this.selected)
+		{
+			this.renderSelectBox();
+		}
 		
 		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 	},
@@ -151,8 +156,7 @@ SCG2.GO.GO.prototype = {
 		}
 		this.updateBoundingBox();
 
-		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere)))
-		{
+		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere))){
 			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
 			SCG2.frameCounter.visibleCount++;
 		}
@@ -192,6 +196,23 @@ SCG2.GO.GO.prototype = {
 			return;
 		}
 		this.boundingBox.render(fill);
+	},
+
+	renderSelectBox: function(){
+		if(this.boundingBox === undefined)
+		{
+			return;
+		}
+		if(this.selectBoxColor === undefined)
+		{
+			this.selectBoxColor = {max:255, min: 100, current: 255, direction:1, step: 1};
+		}
+		this.boundingBox.render({fill:false,strokeStyle: 'rgb(0,'+this.selectBoxColor.current+',0)', lineWidth: 2});
+		if(this.selectBoxColor.current >= this.selectBoxColor.max || this.selectBoxColor.current <= this.selectBoxColor.min)
+		{
+			this.selectBoxColor.direction *=-1;
+		}
+		this.selectBoxColor.current+=(this.selectBoxColor.step*this.selectBoxColor.direction);
 	},
 
 	checkCollisions: function(){

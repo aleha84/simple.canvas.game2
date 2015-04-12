@@ -21,8 +21,14 @@ SCG2.gameLogics = {
 
 //main game objects array
 SCG2.go = [];
+SCG2.shots = [];
 
 SCG2.gameControls = {
+	mousestate : {
+		position: new Vector2,
+		leftButtonDown: false,
+		rightButtonDown: false,
+	},
 	accelerate : false,
 	reverse: false,
 	rotateLeft: false,
@@ -39,6 +45,17 @@ SCG2.gameControls = {
 			//e.stopPropagation();
 			that.keyUp(e);
 		});
+		$(SCG2.canvas).on('mouseup',function(e){
+			that.mouseUp(e);
+		});
+	},
+	mouseUp: function(event){
+		debugger;
+		console.log(e);
+		absorbTouchEvent(e);
+		var posX = $(this).offset().left, posY = $(this).offset().top;
+		var eventPos = pointerEventToXY(e);
+		SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
 	},
 	keyDown: function (event) {
 		switch(event.which)

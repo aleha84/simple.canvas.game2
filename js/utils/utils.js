@@ -215,3 +215,33 @@ function degreeToRadians (degree) {
   }
   return degree * Math.PI / 180;
 }
+
+function isBoolean(variable)
+{
+  return variable.constructor === Boolean || typeof variable === 'boolean';
+}
+
+var pointerEventToXY = function(e){
+  var out = {x:0, y:0};
+  if(e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel'){
+    var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+    out.x = touch.pageX;
+    out.y = touch.pageY;
+  } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+    out.x = e.pageX;
+    out.y = e.pageY;
+  }
+  return out;
+};
+
+function absorbTouchEvent(event) {
+  if(event.type == 'touchstart' || event.type == 'touchmove' || event.type == 'touchend' || event.type == 'touchcancel'){
+    var e = event || window.event;
+    e.preventDefault && e.preventDefault();
+    e.stopPropagation && e.stopPropagation();
+    e.cancelBubble = true;
+    e.returnValue = false;
+    return false;   
+  }
+  
+}

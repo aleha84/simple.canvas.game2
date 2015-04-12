@@ -1,0 +1,9 @@
+//todo
+- visible 'go' array
+- select 'go' by mouse
+- player controllable units
+- free camera
+- centered camera
+- shots array
+- module internal objects
+- segmentToSegment intersection fix

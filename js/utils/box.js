@@ -30,15 +30,26 @@ function Box(topLeft,size){
 		return boxIntersectsBox(this,box);
 	}
 
-	this.render = function  (fill) {
+	this.render = function  (options) {
+		var prop = {
+			fillStyle:'rgba(0, 255, 0, 0.5)', 
+			lineWidth: 1,
+			strokeStyle: '#00FF00',
+		};
+		if(isBoolean(options)){
+			prop.fill = options;
+		}
+		else{
+			$.extend(prop, options);
+		}
 		SCG2.context.beginPath();	
 		SCG2.context.rect(this.topLeft.x, this.topLeft.y, this.size.x, this.size.y);
-		if(fill){
-			SCG2.context.fillStyle = 'rgba(0, 255, 0, 0.5)';
+		if(prop.fill){
+			SCG2.context.fillStyle = prop.fillStyle;
 			SCG2.context.fill();	
 		}
-		SCG2.context.lineWidth = 1;
-		SCG2.context.strokeStyle = '#00FF00';
+		SCG2.context.lineWidth = prop.lineWidth;
+		SCG2.context.strokeStyle = prop.strokeStyle;
 		SCG2.context.closePath();
 		SCG2.context.stroke();
 	}
