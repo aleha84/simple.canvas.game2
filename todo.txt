@@ -1,9 +1,13 @@
 //todo
-- visible 'go' array
-- select 'go' by mouse
++ visible 'go' array
++ select 'go' by mouse
 - player controllable units
+- keyboard controls if nothing selected
 - free camera
 - centered camera
 - shots array
 - module internal objects
 - segmentToSegment intersection fix
+- module collision detection into module base class code
+- selection rectangle (multiple go select)
+- left, right mouse buttons clicks

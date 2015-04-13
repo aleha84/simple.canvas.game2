@@ -110,7 +110,9 @@ SCG2.draw = function(){
 
 	//draw background
 	SCG2.context.drawImage(SCG2.images.starfield,0,0,SCG2.battlefield.width,SCG2.battlefield.height);
-
+	// clear visible go array
+	SCG2.visibleGo = [];
+	
 	var i = SCG2.go.length;
 	while (i--) {
 		if(!SCG2.gameLogics.isPaused && !SCG2.gameLogics.gameOver)
@@ -122,6 +124,7 @@ SCG2.draw = function(){
 			var deleted = SCG2.go.splice(i,1);
 		}
 	}
+
 	//SCG2.frameCounter.renderConsumption.end = new Date;
 	SCG2.frameCounter.doWork(now);
 }

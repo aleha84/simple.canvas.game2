@@ -159,6 +159,7 @@ SCG2.GO.GO.prototype = {
 		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere))){
 			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
 			SCG2.frameCounter.visibleCount++;
+			SCG2.visibleGo.push(this);
 		}
 		else{
 			this.displayPosition = undefined;
@@ -180,6 +181,15 @@ SCG2.GO.GO.prototype = {
 		}
 
 		return new Box(this.boundingBox.topLeft.add(this.position,true),this.boundingBox.size);
+	},
+
+	displayBoundingBox: function(){
+		if(this.boundingBox=== undefined || this.displayPosition === undefined)
+		{
+			throw 'boundingBox or displayPosition -> Undefined';
+		}
+
+		return new Box(this.boundingBox.topLeft.add(this.displayPosition,true),this.boundingBox.size);
 	},
 
 	renderBoundingSphere: function  (fill) {

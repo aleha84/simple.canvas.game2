@@ -22,13 +22,14 @@ SCG2.gameLogics = {
 //main game objects array
 SCG2.go = [];
 SCG2.shots = [];
-
+SCG2.visibleGo = [];
 SCG2.gameControls = {
 	mousestate : {
 		position: new Vector2,
 		leftButtonDown: false,
 		rightButtonDown: false,
 	},
+	selectedGOs : [],
 	accelerate : false,
 	reverse: false,
 	rotateLeft: false,
@@ -50,12 +51,33 @@ SCG2.gameControls = {
 		});
 	},
 	mouseUp: function(event){
-		debugger;
-		console.log(e);
-		absorbTouchEvent(e);
-		var posX = $(this).offset().left, posY = $(this).offset().top;
-		var eventPos = pointerEventToXY(e);
+		//debugger;
+		//console.log(event);
+
+		/*simple selection, without selection rectangle and checking for mouse buttons*/
+
+		//clean current selected gos
+		for (var i = SCG2.gameControls.selectedGOs.length - 1; i >= 0; i--) {
+			SCG2.gameControls.selectedGOs[i].selected = false;
+		};
+		SCG2.gameControls.selectedGOs = [];
+
+		absorbTouchEvent(event);
+		var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
+		var eventPos = pointerEventToXY(event);
 		SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
+		if(SCG2.visibleGo.length)
+		{
+			for (var i = SCG2.visibleGo.length - 1; i >= 0; i--) {
+				if(SCG2.visibleGo[i].boundingBox !== undefined && SCG2.visibleGo[i].displayBoundingBox().isPointInside(SCG2.gameControls.mousestate.position))
+				{
+					//todo multiple go selection
+					SCG2.visibleGo[i].selected = true;
+					SCG2.gameControls.selectedGOs.push(SCG2.visibleGo[i]);
+					break;
+				}
+			};
+		}
 	},
 	keyDown: function (event) {
 		switch(event.which)
