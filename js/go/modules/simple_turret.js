@@ -44,7 +44,7 @@ SCG2.Module.SimpleTurret.prototype.constructor = SCG2.Module.SimpleTurret;
 SCG2.Module.SimpleTurret.counter = 0;
 
 SCG2.Module.SimpleTurret.prototype.innerRender = function(){ 
-	SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
+	//SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
 
 	// if(SCG2.gameLogics.drawBoundings)
 	// {

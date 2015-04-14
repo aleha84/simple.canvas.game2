@@ -37,6 +37,7 @@ SCG2.Module.Module.prototype = {
 		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
 		SCG2.context.rotate(this.angle);
 
+		SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
 		this.innerRender();
 
 		if(SCG2.gameLogics.drawBoundings)

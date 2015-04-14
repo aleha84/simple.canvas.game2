@@ -14,7 +14,7 @@ SCG2.GO.StaticPlatform = function(init){
 
 	SCG2.GO.GO.call(this,prop);
 
-	this.id = 'staticPlatform' + (SCG2.GO.DummyObject.counter++);
+	this.id = 'staticPlatform' + (SCG2.GO.StaticPlatform.counter++);
 	this.addModule(new SCG2.Module.PlatformBase({position: new Vector2}));
 	this.addModule(new SCG2.Module.SimpleTurret({
 			position: new Vector2(30,-30),
@@ -28,10 +28,7 @@ SCG2.GO.StaticPlatform.prototype = Object.create( SCG2.GO.GO.prototype );
 SCG2.GO.StaticPlatform.prototype.constructor = SCG2.GO.StaticPlatform;
 
 SCG2.GO.StaticPlatform.prototype.internalRender = function(){ 
-	var i = this.modules.length;
-	while (i--) {
-		this.modules[i].render();
-	}
+	
 }
 
 SCG2.GO.StaticPlatform.prototype.internalUpdate = function(now){ 

@@ -15,6 +15,7 @@ SCG2.GO.GO = function(prop){
 	this.modules = [];
 	this.collided = false;
 	this.selected = false;
+	this.playerControllable =false;
 	if(prop!=undefined)
 	{
 		if(prop.position!=undefined)
@@ -125,6 +126,10 @@ SCG2.GO.GO.prototype = {
 		SCG2.context.translate(this.displayPosition.x,this.displayPosition.y);
 		SCG2.context.rotate(this.angle);
 		
+		var i = this.modules.length;
+		while (i--) {
+			this.modules[i].render();
+		}
 		this.internalRender();
 
 		SCG2.context.rotate(-this.angle);
@@ -215,9 +220,15 @@ SCG2.GO.GO.prototype = {
 		}
 		if(this.selectBoxColor === undefined)
 		{
-			this.selectBoxColor = {max:255, min: 100, current: 255, direction:1, step: 1};
+			this.selectBoxColor = {max:255, min: 100, current: 255, direction:1, step: 1, colorPattern: 'rgb({0},0,0)'};
+			if(this.playerControllable)
+			{
+				this.selectBoxColor.colorPattern = 'rgb(0,{0},0)'
+			}
 		}
-		this.boundingBox.render({fill:false,strokeStyle: 'rgb(0,'+this.selectBoxColor.current+',0)', lineWidth: 2});
+		
+
+		this.boundingBox.render({fill:false,strokeStyle: String.format(this.selectBoxColor.colorPattern,this.selectBoxColor.current), lineWidth: 2});
 		if(this.selectBoxColor.current >= this.selectBoxColor.max || this.selectBoxColor.current <= this.selectBoxColor.min)
 		{
 			this.selectBoxColor.direction *=-1;

@@ -19,25 +19,7 @@ SCG2.GO.DummyLine = function(init){
 	this.begin = prop.begin;
 	this.end = prop.end;
 	this.id = 'dummyLine_' + (SCG2.GO.DummyLine.counter++);
-	
-	
-	// this.renderBoundingSphere = function  () {
-	// 	if(this.boundingSphere === undefined)
-	// 	{
-	// 		return;
-	// 	}
 
-	// 	this.boundingSphere.render();
-	// }
-
-	// this.renderBoundingBox = function  () {
-	// 	if(this.boundingBox === undefined)
-	// 	{
-	// 		return;
-	// 	}
-
-	// 	this.boundingBox.render();
-	// }
 }
 SCG2.GO.DummyLine.counter = 0;
 SCG2.GO.DummyLine.prototype = Object.create( SCG2.GO.GO.prototype );

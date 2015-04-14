@@ -24,7 +24,7 @@ SCG2.Module.PlatformBase.prototype.constructor = SCG2.Module.PlatformBase;
 SCG2.Module.PlatformBase.counter = 0;
 
 SCG2.Module.PlatformBase.prototype.innerRender = function(){ 
-	SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
+	//SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
 }
 
 SCG2.Module.PlatformBase.prototype.innerUpdate = function(now){ 	

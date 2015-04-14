@@ -73,26 +73,30 @@ $(document).ready(function(){
 	
 	
 	initializer(function(){
-		SCG2.Player = new SCG2.GO.Player;
-		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
-			position: new Vector2(20,0),
-			size: new Vector2(30,30),
-			img: SCG2.images.turret,
-			angle: 0,
-			clamps: { min: 0, max: degreeToRadians(180)},
-			rotationSpeed: 0.01,
-			rotationDirection: -1,
-		}));
-		SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
-			position: new Vector2(-20,0),
-			size: new Vector2(30,30),
-			img: SCG2.images.turret,
-			angle: 0,
-			clamps: { min: degreeToRadians(-180), max: 0},
-			rotationSpeed: 0.01,
-			rotationDirection: 1,
-		}));
-		SCG2.go.push(SCG2.Player);
+		// SCG2.Player = new SCG2.GO.Player;
+		// SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
+		// 	position: new Vector2(20,0),
+		// 	size: new Vector2(30,30),
+		// 	img: SCG2.images.turret,
+		// 	angle: 0,
+		// 	clamps: { min: 0, max: degreeToRadians(180)},
+		// 	rotationSpeed: 0.01,
+		// 	rotationDirection: -1,
+		// }));
+		// SCG2.Player.addModule(new SCG2.Module.SimpleTurret({
+		// 	position: new Vector2(-20,0),
+		// 	size: new Vector2(30,30),
+		// 	img: SCG2.images.turret,
+		// 	angle: 0,
+		// 	clamps: { min: degreeToRadians(-180), max: 0},
+		// 	rotationSpeed: 0.01,
+		// 	rotationDirection: 1,
+		// }));
+		// SCG2.go.push(SCG2.Player);
+
+		var fighter = new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2)});
+		fighter.playerControllable = true;
+		SCG2.go.push(fighter);
 		SCG2.go.push(new SCG2.GO.StaticPlatform({position:new Vector2(100,100)}));
 		SCG2.animate();
 	});
@@ -110,8 +114,11 @@ SCG2.draw = function(){
 
 	//draw background
 	SCG2.context.drawImage(SCG2.images.starfield,0,0,SCG2.battlefield.width,SCG2.battlefield.height);
-	// clear visible go array
-	SCG2.visibleGo = [];
+	if(!SCG2.gameLogics.isPaused && !SCG2.gameLogics.gameOver){
+		// clear visible go array
+		SCG2.visibleGo = [];	
+	}
+	
 	
 	var i = SCG2.go.length;
 	while (i--) {
