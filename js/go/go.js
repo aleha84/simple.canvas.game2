@@ -152,6 +152,34 @@ SCG2.GO.GO.prototype = {
 
 	update: function(now){ 
 		
+		if(this.playerControllable && SCG2.gameControls.selectedGOs.length > 0 && SCG2.gameControls.selectedGOs[0] === this)
+		{
+			var delta = undefined;
+			if(SCG2.gameControls.accelerate)
+			{
+				delta = this.direction.mul(this.speed);
+				this.position.add(delta);
+			}
+
+			if(SCG2.gameControls.reverse)
+			{
+				delta = this.direction.mul(-1*this.speed)
+				this.position.add(delta);
+			}
+
+			if(SCG2.gameControls.rotateLeft)
+			{
+				this.angle -= this.rotationSpeed;
+				this.direction = this.initialDirection.rotate(this.angle,true,false);
+			}
+
+			if(SCG2.gameControls.rotateRight)
+			{
+				this.angle += this.rotationSpeed;
+				this.direction = this.initialDirection.rotate(this.angle,true,false);
+			}
+		}
+
 		var i = this.modules.length;
 		while (i--) {
 			this.modules[i].update(now);
