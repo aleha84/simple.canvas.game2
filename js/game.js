@@ -30,10 +30,67 @@ SCG2.gameControls = {
 		rightButtonDown: false,
 	},
 	selectedGOs : [],
-	accelerate : false,
-	reverse: false,
-	rotateLeft: false,
-	rotateRight: false,
+	camera: {
+		mode: 'free',
+		shiftSpeed: 5,
+		shifts: {
+			left: false,
+			right: false,
+			up: false,
+			down: false
+		},
+		reset: function(){
+			this.shifts.left = false;
+			this.shifts.right = false;
+			this.shifts.up = false;
+			this.shifts.down = false;
+		},
+		update: function(now){
+			var direction = undefined;
+			if(this.shifts.left)
+			{
+				direction = Vector2.left();
+			}
+			if(this.shifts.right)
+			{
+				direction = Vector2.right();
+			}
+			if(this.shifts.up)
+			{
+				if(direction!= undefined)
+				{
+					direction.add(Vector2.up());
+				}
+				else
+				{
+					direction = Vector2.up();	
+				}
+			}
+			if(this.shifts.down)
+			{
+				if(direction!= undefined)
+				{
+					direction.add(Vector2.down());
+				}
+				else
+				{
+					direction = Vector2.down();	
+				}
+			}
+			if(direction!== undefined){
+				var delta = direction.mul(this.shiftSpeed);
+				var bfTL = SCG2.battlefield.current.topLeft.clone();
+				bfTL.add(delta);
+				SCG2.battlefield.current.update(bfTL);		
+			}
+		}
+	},
+	goControl: {
+		accelerate : false,
+		reverse: false,
+		rotateLeft: false,
+		rotateRight: false,
+	},
 	initControlsEvents: function  () {
 		var that = this;
 		$(document).on('keydown',function(e){
@@ -49,6 +106,52 @@ SCG2.gameControls = {
 		$(SCG2.canvas).on('mouseup',function(e){
 			that.mouseUp(e);
 		});
+		$(SCG2.canvas).on('mousemove',function(e){
+			that.mouseMove(e);
+		});
+		$(SCG2.canvas).on('mouseout',function(e){
+			that.mouseOut(e);
+		});
+	},
+	mouseOut: function(event){
+		SCG2.gameControls.camera.reset();
+	},
+	mouseMove: function(event)
+	{
+		absorbTouchEvent(event);
+		var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
+		var eventPos = pointerEventToXY(event);
+		SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
+
+		if(SCG2.gameControls.camera.mode === 'free')
+		{
+			var direction = undefined;
+			if(SCG2.gameControls.mousestate.position.x < 15){
+				SCG2.gameControls.camera.shifts.left = true;
+			}
+			else{
+				SCG2.gameControls.camera.shifts.left = false;	
+			}
+			if(SCG2.gameControls.mousestate.position.x > (SCG2.battlefield.width - 15)){
+				SCG2.gameControls.camera.shifts.right = true;
+			}
+			else{
+				SCG2.gameControls.camera.shifts.right = false;
+			}
+			if(SCG2.gameControls.mousestate.position.y < 15){
+				SCG2.gameControls.camera.shifts.up = true;
+			}
+			else{
+				SCG2.gameControls.camera.shifts.up = false;
+			}
+			if(SCG2.gameControls.mousestate.position.y > (SCG2.battlefield.height - 15)){
+				SCG2.gameControls.camera.shifts.down = true;
+			}
+			else{
+				SCG2.gameControls.camera.shifts.down = false;
+			}	
+		}
+		
 	},
 	mouseUp: function(event){
 		//debugger;
@@ -61,11 +164,6 @@ SCG2.gameControls = {
 			SCG2.gameControls.selectedGOs[i].selected = false;
 		};
 		SCG2.gameControls.selectedGOs = [];
-
-		absorbTouchEvent(event);
-		var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
-		var eventPos = pointerEventToXY(event);
-		SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
 		if(SCG2.visibleGo.length)
 		{
 			for (var i = SCG2.visibleGo.length - 1; i >= 0; i--) {
@@ -83,16 +181,16 @@ SCG2.gameControls = {
 		switch(event.which)
 		{
 			case 87:
-				this.accelerate = true;
+				this.goControl.accelerate = true;
 				break;
 			case 83:
-				this.reverse = true;
+				this.goControl.reverse = true;
 				break;
 			case 65:
-				this.rotateLeft = true;
+				this.goControl.rotateLeft = true;
 				break;
 			case 68:
-				this.rotateRight = true;
+				this.goControl.rotateRight = true;
 				break;
 			default:
 				break;
@@ -102,16 +200,16 @@ SCG2.gameControls = {
 		switch(event.which)
 		{
 			case 87:
-				this.accelerate = false;
+				this.goControl.accelerate = false;
 				break;
 			case 83:
-				this.reverse = false;
+				this.goControl.reverse = false;
 				break;
 			case 65:
-				this.rotateLeft = false;
+				this.goControl.rotateLeft = false;
 				break;
 			case 68:
-				this.rotateRight = false;
+				this.goControl.rotateRight = false;
 				break;
 			case 32:
 				SCG2.gameLogics.isPaused = !SCG2.gameLogics.isPaused;

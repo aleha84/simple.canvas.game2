@@ -117,4 +117,24 @@ function Vector2(x,y){
 			return result;
 		}
 	}
+
+	this.clone = function(){
+		return new Vector2(this.x,this.y);
+	}
+}
+
+Vector2.left = function(){
+	return new Vector2(-1,0);
+}
+
+Vector2.right = function(){
+	return new Vector2(1,0);
+}
+
+Vector2.up = function(){
+	return new Vector2(0,-1);
+}
+
+Vector2.down = function(){
+	return new Vector2(0,1);
 }

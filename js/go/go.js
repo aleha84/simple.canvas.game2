@@ -155,25 +155,25 @@ SCG2.GO.GO.prototype = {
 		if(this.playerControllable && SCG2.gameControls.selectedGOs.length > 0 && SCG2.gameControls.selectedGOs[0] === this)
 		{
 			var delta = undefined;
-			if(SCG2.gameControls.accelerate)
+			if(SCG2.gameControls.goControl.accelerate)
 			{
 				delta = this.direction.mul(this.speed);
 				this.position.add(delta);
 			}
 
-			if(SCG2.gameControls.reverse)
+			if(SCG2.gameControls.goControl.reverse)
 			{
 				delta = this.direction.mul(-1*this.speed)
 				this.position.add(delta);
 			}
 
-			if(SCG2.gameControls.rotateLeft)
+			if(SCG2.gameControls.goControl.rotateLeft)
 			{
 				this.angle -= this.rotationSpeed;
 				this.direction = this.initialDirection.rotate(this.angle,true,false);
 			}
 
-			if(SCG2.gameControls.rotateRight)
+			if(SCG2.gameControls.goControl.rotateRight)
 			{
 				this.angle += this.rotationSpeed;
 				this.direction = this.initialDirection.rotate(this.angle,true,false);

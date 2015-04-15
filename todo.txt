@@ -3,7 +3,7 @@
 + select 'go' by mouse
 + player controllable units
 + keyboard controls if nothing selected
-- free camera
++ free camera
 - centered camera
 - shots array
 - module internal objects

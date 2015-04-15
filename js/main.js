@@ -119,6 +119,7 @@ SCG2.draw = function(){
 		SCG2.visibleGo = [];	
 	}
 	
+	SCG2.gameControls.camera.update(now);
 	
 	var i = SCG2.go.length;
 	while (i--) {
