@@ -19,7 +19,7 @@ SCG2.GO.StaticPlatform = function(init){
 	this.addModule(new SCG2.Module.SimpleTurret({
 			position: new Vector2(30,-30),
 			angle: 0,
-			clamps: { min: degreeToRadians(-45), max: degreeToRadians(45)},
+			clamps: { min: degreeToRadians(-45), max: degreeToRadians(135)},
 			rotationDirection: -1,
 		}));
 }

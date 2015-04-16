@@ -33,11 +33,26 @@ SCG2.gameControls = {
 	camera: {
 		mode: 'free',
 		shiftSpeed: 5,
+		centeredOn: undefined,
 		shifts: {
 			left: false,
 			right: false,
 			up: false,
 			down: false
+		},
+		free: function(){
+			SCG2.gameControls.camera.mode = 'free';
+			this.centeredOn = undefined;
+		},
+		center: function(){
+			if(SCG2.gameControls.selectedGOs.length == 1){
+				SCG2.gameControls.camera.mode = 'centered';
+				this.centeredOn = SCG2.gameControls.selectedGOs[0];
+			}
+			else{
+				SCG2.gameControls.camera.mode = 'free';
+				this.centeredOn = undefined;
+			}
 		},
 		reset: function(){
 			this.shifts.left = false;
@@ -46,43 +61,50 @@ SCG2.gameControls = {
 			this.shifts.down = false;
 		},
 		update: function(now){
-			var direction = undefined;
-			if(this.shifts.left)
-			{
-				direction = Vector2.left();
-			}
-			if(this.shifts.right)
-			{
-				direction = Vector2.right();
-			}
-			if(this.shifts.up)
-			{
-				if(direction!= undefined)
+			if(this.mode === 'free'){
+				var direction = undefined;
+				if(this.shifts.left)
 				{
-					direction.add(Vector2.up());
+					direction = Vector2.left();
 				}
-				else
+				if(this.shifts.right)
 				{
-					direction = Vector2.up();	
+					direction = Vector2.right();
+				}
+				if(this.shifts.up)
+				{
+					if(direction!= undefined)
+					{
+						direction.add(Vector2.up());
+					}
+					else
+					{
+						direction = Vector2.up();	
+					}
+				}
+				if(this.shifts.down)
+				{
+					if(direction!= undefined)
+					{
+						direction.add(Vector2.down());
+					}
+					else
+					{
+						direction = Vector2.down();	
+					}
+				}
+				if(direction!== undefined){
+					var delta = direction.mul(this.shiftSpeed);
+					var bfTL = SCG2.battlefield.current.topLeft.clone();
+					bfTL.add(delta);
+					SCG2.battlefield.current.update(bfTL);		
 				}
 			}
-			if(this.shifts.down)
-			{
-				if(direction!= undefined)
-				{
-					direction.add(Vector2.down());
-				}
-				else
-				{
-					direction = Vector2.down();	
-				}
+			else if(this.mode === 'centered' && this.centeredOn!== undefined){
+				var newBftl = this.centeredOn.position.substract(new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2),true);
+				SCG2.battlefield.current.update(newBftl);
 			}
-			if(direction!== undefined){
-				var delta = direction.mul(this.shiftSpeed);
-				var bfTL = SCG2.battlefield.current.topLeft.clone();
-				bfTL.add(delta);
-				SCG2.battlefield.current.update(bfTL);		
-			}
+			
 		}
 	},
 	goControl: {
@@ -197,6 +219,7 @@ SCG2.gameControls = {
 		}
 	},
 	keyUp: function(event){
+		console.log(event.which);
 		switch(event.which)
 		{
 			case 87:
@@ -213,6 +236,15 @@ SCG2.gameControls = {
 				break;
 			case 32:
 				SCG2.gameLogics.isPaused = !SCG2.gameLogics.isPaused;
+				break;
+			case 67:
+				if(event.shiftKey){
+					SCG2.gameControls.camera.free();
+				}
+				else{
+					SCG2.gameControls.camera.center();
+				}
+				break;
 			default:
 				break;
 		}

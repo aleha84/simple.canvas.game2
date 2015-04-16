@@ -4,7 +4,7 @@
 + player controllable units
 + keyboard controls if nothing selected
 + free camera
-- centered camera
++ centered camera
 - shots array
 - module internal objects
 - segmentToSegment intersection fix
@@ -12,3 +12,4 @@
 - selection rectangle (multiple go select)
 - left, right mouse buttons clicks
 - add ai base
+- mini map
