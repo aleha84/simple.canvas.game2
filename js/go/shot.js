@@ -34,7 +34,10 @@ SCG2.GO.Shot = function(init){
 	SCG2.GO.GO.call(this,prop);
 	this.position = prop.position;
 	this.id = 'Shot_' + (SCG2.GO.Shot.counter++);
-
+	if(prop.parent !== undefined){
+		this.parent = prop.parent;
+	}
+	
 }
 SCG2.GO.Shot.counter = 0;
 SCG2.GO.Shot.prototype = Object.create( SCG2.GO.GO.prototype );
@@ -70,7 +73,7 @@ SCG2.GO.Shot.prototype.checkCollisions = function  () {
 	//var center = new Vector2(this.begin.x +Math.abs((this.end.x - this.begin.x)/2),this.begin.y+Math.abs((this.end.y - this.begin.y)/2));
 	var line = new Line({begin: this.position.add(this.line.begin,true), end: this.position.add(this.line.end,true)});
 	for (var i = SCG2.go.length - 1; i >= 0; i--) {
-		if(SCG2.go[i].id == this.id)
+		if(SCG2.go[i].id == this.id || SCG2.go[i] === this.parent)
 		{
 			continue;
 		}
@@ -78,6 +81,7 @@ SCG2.GO.Shot.prototype.checkCollisions = function  () {
 		if(collided)
 		{
 			//console.log(collided);
+			  
 			this.alive = false;
 		}
 	};

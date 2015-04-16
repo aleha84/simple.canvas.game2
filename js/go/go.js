@@ -56,7 +56,6 @@ SCG2.GO.GO.prototype = {
 	constructor: SCG2.GO.GO,
 
 	setDead : function() {
-		delete SCG.gameLogics.enemies.placed[this.id];
 		this.alive = false;
 	},
 
@@ -189,7 +188,7 @@ SCG2.GO.GO.prototype = {
 		}
 		this.updateBoundingBox();
 
-		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.boundingSphere))){
+		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.absolutBoundingSphere()))){
 			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
 			SCG2.frameCounter.visibleCount++;
 			SCG2.visibleGo.push(this);
@@ -214,6 +213,15 @@ SCG2.GO.GO.prototype = {
 		}
 
 		return new Box(this.boundingBox.topLeft.add(this.position,true),this.boundingBox.size);
+	},
+
+	absolutBoundingSphere: function(){
+		if(this.boundingSphere === undefined)
+		{
+			throw 'boundingSphere Undefined';
+		}
+
+		return new Circle(this.boundingSphere.center.add(this.position,true),this.boundingSphere.radius);
 	},
 
 	displayBoundingBox: function(){
@@ -283,39 +291,10 @@ SCG2.GO.GO.prototype = {
 				if(this.modules.length > 0){
 					for (var j = this.modules.length - 1; j >= 0; j--) {
 						if(this.modules[j].boundingSphere !== undefined){
-							this.modules[j].collided = segmentIntersectCircle(line, new Circle(this.position.add(this.modules[j].position.rotate(this.angle,true,false),true),this.modules[j].boundingSphere.radius));
-							if(this.modules[j].collided){
-								if(this.modules[j].cornerPoints.length > 1){
-									this.modules[j].collidedSegmentIndices = []; //reset index
-									this.modules[j].collisionPoints = [];
-									var relativeToModuleLine = new Line({
-										begin:line.begin.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false), 
-										end:line.end.substract(this.position,true).rotate(-this.angle,true,false).substract(this.modules[j].position,true).rotate(-this.modules[j].angle,true,false)
-									});
-
-									var lDirection = relativeToModuleLine.begin.direction(relativeToModuleLine.end);
-									var secondTryDelta = lDirection.mul(relativeToModuleLine.begin.distance(relativeToModuleLine.end)/5);
-									var relativeToModuleLine2 = new Line({begin:relativeToModuleLine.begin, end:relativeToModuleLine.end.add(secondTryDelta,true)});
-									var closestCollision  = undefined 
-									for (var k= this.modules[j].cornerPoints.length - 1; k >= 0; k--) {
-										var l = new Line({begin: this.modules[j].cornerPoints[k], end: this.modules[j].cornerPoints[k==0?this.modules[j].cornerPoints.length-1:k-1]});
-
-										var collided = segmentsIntersectionVector2(relativeToModuleLine,l) || segmentsIntersectionVector2(relativeToModuleLine2,l);
-										if(collided)
-										{
-											var distance = l.begin.distance(collided);
-											if(closestCollision === undefined || closestCollision.distance > distance)
-											{
-												closestCollision = {collision: collided, distance: distance};
-											}
-											//this.modules[j].collisionPoints.push(collided);
-										}
-									};
-									if(closestCollision!==undefined)
-									{
-										return closestCollision;		
-									}
-								}
+							var c = this.modules[j].checkCollisionWithLine(line);
+							if(c!== undefined)
+							{
+								return c;
 							}
 						}
 					};

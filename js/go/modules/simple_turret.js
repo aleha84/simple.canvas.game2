@@ -15,6 +15,12 @@ SCG2.Module.SimpleTurret = function(init){
 	if(init.size === undefined){
 		init.size = new Vector2(30,30);
 	}
+	if(init.lastTimeShot === undefined){
+		init.lastTimeShot = new Date;
+	}
+	if(init.shotDelay === undefined){
+		init.shotDelay = 250;
+	}
 
 
 	SCG2.Module.Module.call(this,init);
@@ -22,6 +28,8 @@ SCG2.Module.SimpleTurret = function(init){
 	this.clamps = undefined;
 	this.rotationSpeed = 0;
 	this.rotationDirection = 0;
+	
+
 
 	if(init.rotationDirection!== undefined)
 	{
@@ -36,7 +44,13 @@ SCG2.Module.SimpleTurret = function(init){
 		this.clamps = init.clamps;
 	}
 	
-
+	this.makeShot = function(now){
+		if(now - this.lastTimeShot > this.shotDelay)
+		{
+			SCG2.nonplayableGo.push(new SCG2.GO.Shot({position:this.parent.position.add(this.position,true),direction: Vector2.up().rotate(this.angle,true,false),parent:this.parent}));	
+			this.lastTimeShot = now;
+		}		
+	}
 }
 
 SCG2.Module.SimpleTurret.prototype = Object.create( SCG2.Module.Module.prototype );

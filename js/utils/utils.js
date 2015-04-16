@@ -221,6 +221,11 @@ function isBoolean(variable)
   return variable.constructor === Boolean || typeof variable === 'boolean';
 }
 
+function isString(variable)
+{
+  return typeof myVar == 'string' || myVar instanceof String;
+}
+
 var pointerEventToXY = function(e){
   var out = {x:0, y:0};
   if(e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel'){

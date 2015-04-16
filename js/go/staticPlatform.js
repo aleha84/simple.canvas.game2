@@ -19,7 +19,7 @@ SCG2.GO.StaticPlatform = function(init){
 	this.addModule(new SCG2.Module.SimpleTurret({
 			position: new Vector2(30,-30),
 			angle: 0,
-			clamps: { min: degreeToRadians(-45), max: degreeToRadians(135)},
+			clamps: { min: degreeToRadians(-5), max: degreeToRadians(5)},
 			rotationDirection: -1,
 		}));
 }
@@ -32,6 +32,11 @@ SCG2.GO.StaticPlatform.prototype.internalRender = function(){
 }
 
 SCG2.GO.StaticPlatform.prototype.internalUpdate = function(now){ 
-	
+	for (var i = this.modules.length - 1; i >= 0; i--) {
+		if(this.modules[i].makeShot)
+		{
+			this.modules[i].makeShot(now);	
+		}
+	};
 }
 

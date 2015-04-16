@@ -5,11 +5,11 @@
 + keyboard controls if nothing selected
 + free camera
 + centered camera
-- shots array
-- module internal objects
-- segmentToSegment intersection fix
-- module collision detection into module base class code
++ nonplayableGo array
++ module collision detection into module base class code
 - selection rectangle (multiple go select)
 - left, right mouse buttons clicks
 - add ai base
 - mini map
+- module internal objects
+- segmentToSegment intersection fix

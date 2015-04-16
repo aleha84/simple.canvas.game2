@@ -133,6 +133,19 @@ SCG2.draw = function(){
 		}
 	}
 
+	var ni = SCG2.nonplayableGo.length;
+	while (ni--) {
+		if(!SCG2.gameLogics.isPaused && !SCG2.gameLogics.gameOver)
+		{
+			SCG2.nonplayableGo[ni].update(now);
+		}
+		SCG2.nonplayableGo[ni].render();
+		if(!SCG2.nonplayableGo[ni].alive){
+			var deleted = SCG2.nonplayableGo.splice(ni,1);
+		}
+	}
+
+
 	//SCG2.frameCounter.renderConsumption.end = new Date;
 	SCG2.frameCounter.doWork(now);
 }

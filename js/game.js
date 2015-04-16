@@ -21,7 +21,7 @@ SCG2.gameLogics = {
 
 //main game objects array
 SCG2.go = [];
-SCG2.shots = [];
+SCG2.nonplayableGo = [];
 SCG2.visibleGo = [];
 SCG2.gameControls = {
 	mousestate : {
@@ -244,6 +244,9 @@ SCG2.gameControls = {
 				else{
 					SCG2.gameControls.camera.center();
 				}
+				break;
+			case 84:
+				
 				break;
 			default:
 				break;
