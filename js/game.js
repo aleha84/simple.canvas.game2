@@ -1,6 +1,10 @@
 var SCG2 = {};
 
 SCG2.battlefield = {
+	default: {
+		width: 1024,
+		height: 768
+	},
 	width: 1024,
 	height: 768,
 	current: undefined,
@@ -24,6 +28,35 @@ SCG2.go = [];
 SCG2.nonplayableGo = [];
 SCG2.visibleGo = [];
 SCG2.gameControls = {
+	scale: {
+		current: 1,
+		step: 0.75,
+		max: 1,
+		min: 0.5625,
+		change: function(direction){
+			if(direction > 0){ //+
+				if(this.current == this.max)
+				{
+					return;
+				}
+				this.current /= this.step;
+				SCG2.context.scale(4/3,4/3);
+			}
+			else if(direction < 0) // -
+			{
+				if(this.current == this.min)
+				{
+					return;
+				}
+				this.current *= this.step;
+				SCG2.context.scale(0.75,0.75);					
+			}
+
+			SCG2.battlefield.width=SCG2.battlefield.default.width/this.current;
+			SCG2.battlefield.height=SCG2.battlefield.default.height/this.current;
+			SCG2.battlefield.current.update(SCG2.battlefield.current.topLeft,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height))
+		}
+	},
 	mousestate : {
 		position: new Vector2,
 		leftButtonDown: false,
@@ -134,6 +167,17 @@ SCG2.gameControls = {
 		$(SCG2.canvas).on('mouseout',function(e){
 			that.mouseOut(e);
 		});
+		$(SCG2.canvas).on('mousewheel',function(e){
+			that.mouseScroll(e);
+		});
+	},
+	mouseScroll: function(event){
+		if(event.originalEvent.wheelDelta >= 0){
+			SCG2.gameControls.scale.change(1);
+		}else{
+			SCG2.gameControls.scale.change(-1);
+		}
+
 	},
 	mouseOut: function(event){
 		SCG2.gameControls.camera.reset();
@@ -154,7 +198,7 @@ SCG2.gameControls = {
 			else{
 				SCG2.gameControls.camera.shifts.left = false;	
 			}
-			if(SCG2.gameControls.mousestate.position.x > (SCG2.battlefield.width - 15)){
+			if(SCG2.gameControls.mousestate.position.x > (SCG2.battlefield.default.width - 15)){
 				SCG2.gameControls.camera.shifts.right = true;
 			}
 			else{
@@ -166,7 +210,7 @@ SCG2.gameControls = {
 			else{
 				SCG2.gameControls.camera.shifts.up = false;
 			}
-			if(SCG2.gameControls.mousestate.position.y > (SCG2.battlefield.height - 15)){
+			if(SCG2.gameControls.mousestate.position.y > (SCG2.battlefield.default.height - 15)){
 				SCG2.gameControls.camera.shifts.down = true;
 			}
 			else{
@@ -245,8 +289,15 @@ SCG2.gameControls = {
 					SCG2.gameControls.camera.center();
 				}
 				break;
+			case 90:
+				if(event.shiftKey){ //+
+					SCG2.gameControls.scale.change(1);
+				}
+				else{ // -
+					SCG2.gameControls.scale.change(-1);
+				}
+				break;
 			case 84:
-				
 				break;
 			default:
 				break;

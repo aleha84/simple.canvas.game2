@@ -230,7 +230,7 @@ SCG2.GO.GO.prototype = {
 			throw 'boundingBox or displayPosition -> Undefined';
 		}
 
-		return new Box(this.boundingBox.topLeft.add(this.displayPosition,true),this.boundingBox.size);
+		return new Box(this.boundingBox.topLeft.add(this.displayPosition,true).mul(SCG2.gameControls.scale.current),this.boundingBox.size.mul(SCG2.gameControls.scale.current));
 	},
 
 	renderBoundingSphere: function  (fill) {
