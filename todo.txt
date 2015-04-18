@@ -8,10 +8,11 @@
 + nonplayableGo array
 + module collision detection into module base class code
 + zoom
-- camera position drag by mouse
-- selection rectangle (multiple go select)
-- left, right mouse buttons clicks
++ camera position drag by mouse
++ left, right mouse buttons clicks
+- ship constructor
 - add ai base
 - mini map
 - module internal objects
+- selection rectangle (multiple go select)
 - segmentToSegment intersection fix

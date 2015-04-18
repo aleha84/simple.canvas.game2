@@ -54,13 +54,20 @@ SCG2.gameControls = {
 
 			SCG2.battlefield.width=SCG2.battlefield.default.width/this.current;
 			SCG2.battlefield.height=SCG2.battlefield.default.height/this.current;
-			SCG2.battlefield.current.update(SCG2.battlefield.current.topLeft,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height))
+			var center = SCG2.battlefield.current.center.clone();
+			SCG2.battlefield.current.update(new Vector2(center.x - (SCG2.battlefield.width/2),center.y - (SCG2.battlefield.height/2)),new Vector2(SCG2.battlefield.width,SCG2.battlefield.height))
 		}
 	},
 	mousestate : {
 		position: new Vector2,
 		leftButtonDown: false,
 		rightButtonDown: false,
+		middleButtonDown: false,
+		reset: function(){
+			this.leftButtonDown = false;
+            this.rightButtonDown = false;
+            this.middleButtonDown = false;
+		}
 	},
 	selectedGOs : [],
 	camera: {
@@ -158,6 +165,9 @@ SCG2.gameControls = {
 			//e.stopPropagation();
 			that.keyUp(e);
 		});
+		$(SCG2.canvas).on('mousedown',function(e){
+			that.mouseDown(e);
+		});
 		$(SCG2.canvas).on('mouseup',function(e){
 			that.mouseUp(e);
 		});
@@ -170,6 +180,27 @@ SCG2.gameControls = {
 		$(SCG2.canvas).on('mousewheel',function(e){
 			that.mouseScroll(e);
 		});
+
+		$(SCG2.canvas).on('contextmenu',function(e){
+			e.preventDefault();
+			return false;
+		});
+	},
+	mouseDown: function(event){
+		switch (event.which) {
+	        case 1:
+	            SCG2.gameControls.mousestate.leftButtonDown = true;
+	            break;
+	        case 2:
+	            SCG2.gameControls.mousestate.middleButtonDown = true;
+	            break;
+	        case 3:
+	            SCG2.gameControls.mousestate.rightButtonDown = true;
+	            break;
+	        default:
+	            SCG2.gameControls.mousestate.reset();
+	            break;
+	    }
 	},
 	mouseScroll: function(event){
 		if(event.originalEvent.wheelDelta >= 0){
@@ -181,13 +212,23 @@ SCG2.gameControls = {
 	},
 	mouseOut: function(event){
 		SCG2.gameControls.camera.reset();
+		SCG2.gameControls.mousestate.reset();
 	},
 	mouseMove: function(event)
 	{
+		var oldPosition = SCG2.gameControls.mousestate.position.clone();
+
 		absorbTouchEvent(event);
 		var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
 		var eventPos = pointerEventToXY(event);
 		SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
+
+		if(SCG2.gameControls.mousestate.rightButtonDown)
+		{
+			var delta = oldPosition.directionNonNormal(SCG2.gameControls.mousestate.position);
+			var newBftl = SCG2.battlefield.current.topLeft.clone().substract(delta,true);
+			SCG2.battlefield.current.update(newBftl);
+		}
 
 		if(SCG2.gameControls.camera.mode === 'free')
 		{
@@ -220,12 +261,26 @@ SCG2.gameControls = {
 		
 	},
 	mouseUp: function(event){
-		//debugger;
-		//console.log(event);
+		switch (event.which) {
+	        case 1:
+	            SCG2.gameControls.mousestate.leftButtonDown = false;
+	            break;
+	        case 2:
+	            SCG2.gameControls.mousestate.middleButtonDown = false;
+	            break;
+	        case 3:
+	            SCG2.gameControls.mousestate.rightButtonDown = false;
+	            break;
+	        default:
+	            SCG2.gameControls.mousestate.reset();
+	            break;
+	    }
 
 		/*simple selection, without selection rectangle and checking for mouse buttons*/
 
 		//clean current selected gos
+		event.preventDefault();
+
 		for (var i = SCG2.gameControls.selectedGOs.length - 1; i >= 0; i--) {
 			SCG2.gameControls.selectedGOs[i].selected = false;
 		};
