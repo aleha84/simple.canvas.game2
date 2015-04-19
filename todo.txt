@@ -15,4 +15,4 @@
 - mini map
 - module internal objects
 - selection rectangle (multiple go select)
-- segmentToSegment intersection fix
++ segmentToSegment intersection fix

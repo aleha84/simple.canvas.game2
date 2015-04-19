@@ -145,6 +145,13 @@ function segmentIntersectCircle(segment,circle)
     return false;
 }
 
+function segmentIntersectCircle2(segment,circle)
+{
+  var d1 = circle.center.distance(segment.begin);
+  var d2 = circle.center.distance(segment.end);
+  return d1 <= circle.radius || d2 <= circle.radius;
+}
+
 function segmentsIntersectionVector2(line1, line2)
 {
   var x1 = line1.begin.x;
@@ -162,8 +169,8 @@ function segmentsIntersectionVector2(line1, line2)
     return undefined;
   }
 
-  var xi = ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
-  var yi = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+  var xi = +(((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d).toFixed(2);
+  var yi = +(((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d).toFixed(2);
 
   var p = new Vector2(xi,yi);
   if (xi < Math.min(x1,x2) || xi > Math.max(x1,x2)) return undefined;

@@ -19,6 +19,7 @@ SCG2.canvas = undefined;
 SCG2.context = undefined;
 SCG2.gameLogics = {
 	isPaused: false,
+	isPausedStep: false,
 	gameOver: false,
 	drawBoundings: true
 }
@@ -334,7 +335,13 @@ SCG2.gameControls = {
 				this.goControl.rotateRight = false;
 				break;
 			case 32:
-				SCG2.gameLogics.isPaused = !SCG2.gameLogics.isPaused;
+				if(event.shiftKey){ 
+					SCG2.gameLogics.isPausedStep = true;
+				}
+				else{
+					SCG2.gameLogics.isPaused = !SCG2.gameLogics.isPaused;	
+				}
+				
 				break;
 			case 67:
 				if(event.shiftKey){

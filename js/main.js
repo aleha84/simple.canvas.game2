@@ -114,7 +114,7 @@ SCG2.draw = function(){
 
 	//draw background
 	SCG2.context.drawImage(SCG2.images.starfield,0,0,SCG2.battlefield.width,SCG2.battlefield.height);
-	if(!SCG2.gameLogics.isPaused && !SCG2.gameLogics.gameOver){
+	if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver){
 		// clear visible go array
 		SCG2.visibleGo = [];	
 	}
@@ -123,7 +123,7 @@ SCG2.draw = function(){
 	
 	var i = SCG2.go.length;
 	while (i--) {
-		if(!SCG2.gameLogics.isPaused && !SCG2.gameLogics.gameOver)
+		if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
 		{
 			SCG2.go[i].update(now);
 		}
@@ -135,7 +135,7 @@ SCG2.draw = function(){
 
 	var ni = SCG2.nonplayableGo.length;
 	while (ni--) {
-		if(!SCG2.gameLogics.isPaused && !SCG2.gameLogics.gameOver)
+		if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
 		{
 			SCG2.nonplayableGo[ni].update(now);
 		}
@@ -143,6 +143,11 @@ SCG2.draw = function(){
 		if(!SCG2.nonplayableGo[ni].alive){
 			var deleted = SCG2.nonplayableGo.splice(ni,1);
 		}
+	}
+
+	if(SCG2.gameLogics.isPausedStep)
+	{
+		SCG2.gameLogics.isPausedStep =false;
 	}
 
 

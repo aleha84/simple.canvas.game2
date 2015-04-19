@@ -99,7 +99,7 @@ SCG2.Module.Module.prototype = {
 
 	checkCollisionWithLine: function(line)
 	{
-		this.collided = segmentIntersectCircle(line, new Circle(this.parent.position.add(this.position.rotate(this.parent.angle,true,false),true),this.boundingSphere.radius));
+		this.collided = segmentIntersectCircle2(line, new Circle(this.parent.position.add(this.position.rotate(this.parent.angle,true,false),true),this.boundingSphere.radius));
 		if(this.collided){
 			if(this.cornerPoints.length > 1){
 				this.collidedSegmentIndices = []; //reset index
@@ -109,17 +109,17 @@ SCG2.Module.Module.prototype = {
 					end:line.end.substract(this.parent.position,true).rotate(-this.parent.angle,true,false).substract(this.position,true).rotate(-this.angle,true,false)
 				});
 
-				var lDirection = relativeToModuleLine.begin.direction(relativeToModuleLine.end);
-				var secondTryDelta = lDirection.mul(relativeToModuleLine.begin.distance(relativeToModuleLine.end)/5);
-				var relativeToModuleLine2 = new Line({begin:relativeToModuleLine.begin, end:relativeToModuleLine.end.add(secondTryDelta,true)});
+				// var lDirection = relativeToModuleLine.begin.direction(relativeToModuleLine.end);
+				// var secondTryDelta = lDirection.mul(relativeToModuleLine.begin.distance(relativeToModuleLine.end)/5);
+				// var relativeToModuleLine2 = new Line({begin:relativeToModuleLine.begin.substract(secondTryDelta,true), end:relativeToModuleLine.end.add(secondTryDelta,true)});
 				var closestCollision  = undefined 
 				for (var k= this.cornerPoints.length - 1; k >= 0; k--) {
 					var l = new Line({begin: this.cornerPoints[k], end: this.cornerPoints[k==0?this.cornerPoints.length-1:k-1]});
 
-					var collided = segmentsIntersectionVector2(relativeToModuleLine,l) || segmentsIntersectionVector2(relativeToModuleLine2,l);
+					var collided = segmentsIntersectionVector2(relativeToModuleLine,l); //|| segmentsIntersectionVector2(relativeToModuleLine2,l);
 					if(collided)
 					{
-						var distance = l.begin.distance(collided);
+						var distance = relativeToModuleLine.begin.distance(collided);
 						if(closestCollision === undefined || closestCollision.distance > distance)
 						{
 							closestCollision = {collision: collided, distance: distance};
@@ -129,9 +129,13 @@ SCG2.Module.Module.prototype = {
 				};
 				if(closestCollision!==undefined)
 				{
+					if(this instanceof SCG2.Module.SpaceshipBody)
+					{
+						debugger;
+					}
 					var absCollisionPosition = closestCollision.collision.clone().rotate(this.angle,true,false).add(this.position,true).rotate(this.parent.angle,true,false).add(this.parent.position,true);
-					SCG2.nonplayableGo.push(new SCG2.GO.SimpleExplosion({position: absCollisionPosition}));
-					return closestCollision;		
+					//SCG2.nonplayableGo.push(new SCG2.GO.SimpleExplosion({position: absCollisionPosition}));
+					return {distance: closestCollision.distance, absolute: absCollisionPosition};		
 				}
 			}
 		}

@@ -289,15 +289,25 @@ SCG2.GO.GO.prototype = {
 				segmentIntersectBox(line, new Box(this.position.add(this.boundingBox.topLeft,true),this.boundingBox.size));
 			if(this.collided){
 				if(this.modules.length > 0){
+					var closestCollision = undefined;
 					for (var j = this.modules.length - 1; j >= 0; j--) {
 						if(this.modules[j].boundingSphere !== undefined){
 							var c = this.modules[j].checkCollisionWithLine(line);
 							if(c!== undefined)
 							{
-								return c;
+								if(closestCollision === undefined || closestCollision.distance > c.distance)
+								{
+									closestCollision = c;
+								}
 							}
 						}
 					};
+					if(closestCollision!==undefined)
+					{
+						//var absCollisionPosition = closestCollision.collision.clone().rotate(this.angle,true,false).add(this.position,true).rotate(this.parent.angle,true,false).add(this.parent.position,true);
+						SCG2.nonplayableGo.push(new SCG2.GO.SimpleExplosion({position: closestCollision.absolute}));
+						return closestCollision;		
+					}
 				}	
 			}
 			
