@@ -151,6 +151,20 @@ SCG2.GO.GO.prototype = {
 
 	update: function(now){ 
 		
+		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.absolutBoundingSphere()))){
+			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
+			SCG2.frameCounter.visibleCount++;
+			SCG2.visibleGo.push(this);
+		}
+		else{
+			this.displayPosition = undefined;
+		}	
+
+		if(SCG2.gameLogics.isPaused /*|| (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)*/ || SCG2.gameLogics.gameOver || SCG2.modeller.options.isActive)
+		{
+			return;
+		}
+
 		if(this.playerControllable && SCG2.gameControls.selectedGOs.length > 0 && SCG2.gameControls.selectedGOs[0] === this)
 		{
 			var delta = undefined;
@@ -188,15 +202,6 @@ SCG2.GO.GO.prototype = {
 		}
 		this.updateBoundingBox();
 
-		if((this.boundingBox!== undefined && SCG2.battlefield.current.isIntersectsWithBox(this.absolutBoundingBox())) || (this.boundingSphere!== undefined && SCG2.battlefield.current.isIntersectsWithCircle(this.absolutBoundingSphere()))){
-			this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
-			SCG2.frameCounter.visibleCount++;
-			SCG2.visibleGo.push(this);
-		}
-		else{
-			this.displayPosition = undefined;
-		}
-		
 		this.checkCollisions();
 		
 		this.internalUpdate(now);

@@ -257,3 +257,13 @@ function absorbTouchEvent(event) {
   }
   
 }
+
+function addModellerBtn(container){
+  var showModellerDialogBtn = $('<input />', { id: 'showModellerDialog', type:'button', value: 'modeller', on: {'click':function(){ SCG2.modeller.showDialog(); }}});
+  container.append(showModellerDialogBtn);
+}
+
+function addScene1Btn(container){
+  var showModellerDialogBtn = $('<input />', { id: 'showScene', type:'button', value: 'modeller', on: {'click':function(){ SCG2.initScene1(); }}});
+  container.append(showModellerDialogBtn);
+}

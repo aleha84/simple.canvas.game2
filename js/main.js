@@ -41,6 +41,7 @@ SCG2.src = {
 	debug_ship: 'content/images/debug_ship.png',
 	turret: 'content/images/turret.png',
 	platformBase: 'content/images/platformBase.png',
+	module_internal_square: 'content/images/module_internal_square.png',
 };
 SCG2.images = {
 }
@@ -56,6 +57,8 @@ $(document).ready(function(){
 		$(document.body).append(c);
 		SCG2.canvas = c.get(0);
 		SCG2.context = SCG2.canvas.getContext('2d');
+
+		
 	}
 	
 	SCG2.gameControls.initControlsEvents();
@@ -94,13 +97,30 @@ $(document).ready(function(){
 		// }));
 		// SCG2.go.push(SCG2.Player);
 
-		var fighter = new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2)});
-		fighter.playerControllable = true;
-		SCG2.go.push(fighter);
-		SCG2.go.push(new SCG2.GO.StaticPlatform({position:new Vector2(100,100)}));
+		SCG2.initScene1();
 		SCG2.animate();
 	});
 });
+
+SCG2.initScene1 = function(){
+	$('#showScene, #modulesSelectPanel').remove();
+
+	SCG2.modeller.options.isActive = false;
+	var fighter = new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2)});
+	fighter.playerControllable = true;
+	SCG2.defaultScene = {};
+	SCG2.defaultScene.go = [];
+	SCG2.defaultScene.go.push(fighter);
+	SCG2.defaultScene.go.push(new SCG2.GO.StaticPlatform({position:new Vector2(100,100)}));
+	SCG2.go = SCG2.defaultScene.go;
+
+	SCG2.nonplayableGo = [];
+	SCG2.gameControls.selectedGOs = [];
+	SCG2.gameControls.selectedGOs.push(fighter);
+	SCG2.gameControls.camera.center();
+
+	addModellerBtn($(document.body));
+}
 
 SCG2.animate = function() {
 	//SCG2.frameCounter.renderConsumption.begin = new Date;
@@ -123,10 +143,10 @@ SCG2.draw = function(){
 	
 	var i = SCG2.go.length;
 	while (i--) {
-		if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
-		{
+		//if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
+		//{
 			SCG2.go[i].update(now);
-		}
+		//}
 		SCG2.go[i].render();
 		if(!SCG2.go[i].alive){
 			var deleted = SCG2.go.splice(i,1);
@@ -135,10 +155,10 @@ SCG2.draw = function(){
 
 	var ni = SCG2.nonplayableGo.length;
 	while (ni--) {
-		if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
-		{
+		//if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
+		//{
 			SCG2.nonplayableGo[ni].update(now);
-		}
+		//}
 		SCG2.nonplayableGo[ni].render();
 		if(!SCG2.nonplayableGo[ni].alive){
 			var deleted = SCG2.nonplayableGo.splice(ni,1);

@@ -10,6 +10,9 @@
 + zoom
 + camera position drag by mouse
 + left, right mouse buttons clicks
+- pause lifetime timeout fixes
+- pause exception fix
+- hud zoom fix
 - ship constructor
 - add ai base
 - mini map

@@ -24,6 +24,7 @@ SCG2.Module.Module = function(init){
 	this.collided = false;
 	this.collidedSegmentIndices = [];
 	this.collisionPoints = [];
+	this.connectionLinks = [];
 }
 
 SCG2.Module.Module.prototype = {

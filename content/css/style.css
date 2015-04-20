@@ -1,0 +1,29 @@
+#modulesSelectPanel
+{
+	position:absolute;
+	top:0px;
+	  background-color: lightgray;
+}
+
+.moduleBlock
+{
+	width:30px;
+	height:30px;
+	background-size: cover;
+	margin: 5px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: transparent;
+    box-sizing: border-box;
+}
+
+.moduleBlock:hover
+{
+	border-color: yellow;
+}
+
+.moduleBlock.selected
+{
+	border-width: 3px;
+	border-color: green;
+}
