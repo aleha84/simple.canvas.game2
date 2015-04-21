@@ -121,6 +121,14 @@ function Vector2(x,y){
 	this.clone = function(){
 		return new Vector2(this.x,this.y);
 	}
+
+	this.equal = function(to){
+		if(!to || !(to instanceof Vector2)){
+			return false;
+		}
+
+		return this.x == to.x && this.y == to.y;
+	}
 }
 
 Vector2.left = function(){

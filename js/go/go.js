@@ -18,34 +18,39 @@ SCG2.GO.GO = function(prop){
 	this.playerControllable =false;
 	if(prop!=undefined)
 	{
-		if(prop.position!=undefined)
-		{
-			this.position = prop.position;	
-		}
-		if(prop.size!=undefined)
-		{
-			this.size = prop.size;
-		}
-		if(prop.speed!=undefined)
-		{
-			this.speed = prop.speed;
-		}
-		if(prop.direction!=undefined)
-		{
-			this.initialDirection = prop.direction;
-		}
-		if(prop.direction!=undefined)
-		{
-			this.direction = prop.direction;
-		}
-		if(prop.rotationSpeed!=undefined)
-		{
-			this.rotationSpeed = prop.rotationSpeed;
-		}
-		if(prop.modules!=undefined)
-		{
-			this.modules = prop.modules;
-		}
+		$.extend(this,prop);
+		// if(prop.position!=undefined)
+		// {
+		// 	this.position = prop.position;	
+		// }
+		// if(prop.size!=undefined)
+		// {
+		// 	this.size = prop.size;
+		// }
+		// if(prop.speed!=undefined)
+		// {
+		// 	this.speed = prop.speed;
+		// }
+		// if(prop.direction!=undefined)
+		// {
+		// 	this.initialDirection = prop.direction;
+		// }
+		// if(prop.direction!=undefined)
+		// {
+		// 	this.direction = prop.direction;
+		// }
+		// if(prop.rotationSpeed!=undefined)
+		// {
+		// 	this.rotationSpeed = prop.rotationSpeed;
+		// }
+		// if(prop.modules!=undefined)
+		// {
+		// 	this.modules = prop.modules;
+		// }
+	}
+	if(this.direction!=undefined)
+	{
+		this.initialDirection = this.direction;
 	}
 	this.boundingBox = this.calculeteBoundingBox();
 	this.boundingSphere = this.calculateBoundingSphere();
@@ -296,7 +301,7 @@ SCG2.GO.GO.prototype = {
 				if(this.modules.length > 0){
 					var closestCollision = undefined;
 					for (var j = this.modules.length - 1; j >= 0; j--) {
-						if(this.modules[j].boundingSphere !== undefined){
+						if(this.modules[j].alive && this.modules[j].boundingSphere !== undefined){
 							var c = this.modules[j].checkCollisionWithLine(line);
 							if(c!== undefined)
 							{

@@ -42,6 +42,10 @@ SCG2.src = {
 	turret: 'content/images/turret.png',
 	platformBase: 'content/images/platformBase.png',
 	module_internal_square: 'content/images/module_internal_square.png',
+	module_internal_triangle_bottomLeft: 'content/images/module_internal_triangle_bottomLeft.png',
+	module_internal_triangle_bottomRight: 'content/images/module_internal_triangle_bottomRight.png',
+	module_internal_triangle_topLeft: 'content/images/module_internal_triangle_topLeft.png',
+	module_internal_triangle_topRight: 'content/images/module_internal_triangle_topRight.png',
 };
 SCG2.images = {
 }
@@ -61,7 +65,6 @@ $(document).ready(function(){
 		
 	}
 	
-	SCG2.gameControls.initControlsEvents();
 	SCG2.battlefield.current = new Box(new Vector2,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height));
 
 	
@@ -96,7 +99,7 @@ $(document).ready(function(){
 		// 	rotationDirection: 1,
 		// }));
 		// SCG2.go.push(SCG2.Player);
-
+		SCG2.modeller.modules.init();
 		SCG2.initScene1();
 		SCG2.animate();
 	});
@@ -104,9 +107,9 @@ $(document).ready(function(){
 
 SCG2.initScene1 = function(){
 	$('#showScene, #modulesSelectPanel').remove();
-
+	SCG2.gameLogics.isPaused = false;
 	SCG2.modeller.options.isActive = false;
-	var fighter = new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2)});
+	var fighter = new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2),selected: true});
 	fighter.playerControllable = true;
 	SCG2.defaultScene = {};
 	SCG2.defaultScene.go = [];
@@ -118,6 +121,9 @@ SCG2.initScene1 = function(){
 	SCG2.gameControls.selectedGOs = [];
 	SCG2.gameControls.selectedGOs.push(fighter);
 	SCG2.gameControls.camera.center();
+
+	SCG2.modeller.options.disableControlsEvents();
+	SCG2.gameControls.initControlsEvents();
 
 	addModellerBtn($(document.body));
 }

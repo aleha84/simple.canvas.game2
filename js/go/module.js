@@ -11,9 +11,10 @@ SCG2.Module.Module = function(init){
 	this.id = '';
 	this.cornerPoints = [];
 	this.boundingSphere = undefined;
+	this.connectionInnerLinks = undefined;
 	if(init!=undefined)
 	{
-		$.extend(this,init);
+		$.extend(true,this,init);
 	}
 	if(init.displayPosition === undefined)
 	{
@@ -24,7 +25,7 @@ SCG2.Module.Module = function(init){
 	this.collided = false;
 	this.collidedSegmentIndices = [];
 	this.collisionPoints = [];
-	this.connectionLinks = [];
+
 }
 
 SCG2.Module.Module.prototype = {
@@ -130,10 +131,10 @@ SCG2.Module.Module.prototype = {
 				};
 				if(closestCollision!==undefined)
 				{
-					if(this instanceof SCG2.Module.SpaceshipBody)
-					{
-						debugger;
-					}
+					// if(this instanceof SCG2.Module.SpaceshipBody)
+					// {
+					// 	debugger;
+					// }
 					var absCollisionPosition = closestCollision.collision.clone().rotate(this.angle,true,false).add(this.position,true).rotate(this.parent.angle,true,false).add(this.parent.position,true);
 					//SCG2.nonplayableGo.push(new SCG2.GO.SimpleExplosion({position: absCollisionPosition}));
 					return {distance: closestCollision.distance, absolute: absCollisionPosition};		

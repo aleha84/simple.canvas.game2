@@ -57,7 +57,14 @@ SCG2.gameControls = {
 			SCG2.battlefield.height=SCG2.battlefield.default.height/this.current;
 			var center = SCG2.battlefield.current.center.clone();
 			SCG2.battlefield.current.update(new Vector2(center.x - (SCG2.battlefield.width/2),center.y - (SCG2.battlefield.height/2)),new Vector2(SCG2.battlefield.width,SCG2.battlefield.height))
-		}
+		},
+		reset: function(){
+			SCG2.context.setTransform(1, 0, 0, 1, 0, 0);
+			SCG2.battlefield.width = SCG2.battlefield.default.width;
+			SCG2.battlefield.height = SCG2.battlefield.default.height;
+			this.current = 1;
+			SCG2.battlefield.current.update(SCG2.battlefield.current.topLeft.clone(),new Vector2(SCG2.battlefield.width,SCG2.battlefield.height))
+		},
 	},
 	mousestate : {
 		position: new Vector2,
@@ -154,16 +161,17 @@ SCG2.gameControls = {
 		rotateLeft: false,
 		rotateRight: false,
 	},
+	disableControlsEvents: function(){
+		$(document).off('keydown');
+		$(document).off('keyup');
+		$(SCG2.canvas).off();
+	},
 	initControlsEvents: function  () {
 		var that = this;
 		$(document).on('keydown',function(e){
-			//e.preventDefault();
-			//e.stopPropagation();
 			that.keyDown(e);
 		})
 		$(document).on('keyup',function(e){
-			//e.preventDefault();
-			//e.stopPropagation();
 			that.keyUp(e);
 		});
 		$(SCG2.canvas).on('mousedown',function(e){
