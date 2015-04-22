@@ -11,8 +11,8 @@ SCG2.modeller.PlaceHolder = function (init) {
 	this.update = function(now){
 		this.displayPosition = this.position.substract(SCG2.battlefield.current.topLeft,true);
 		this.displayBox = new Box(this.displayPosition.substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
-		if(SCG2.modeller.options.mousestate.position){
-			this.mouseOver = this.displayBox.isPointInside(SCG2.modeller.options.mousestate.position);
+		if(SCG2.gameControls.mousestate.position){
+			this.mouseOver = this.displayBox.isPointInside(SCG2.gameControls.mousestate.position);
 			if(this.mouseOver) {SCG2.modeller.currentPlaceHolder = this;}
 		}
 	}

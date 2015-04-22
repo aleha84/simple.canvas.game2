@@ -85,6 +85,7 @@ SCG2.GO.GO.prototype = {
 
 	addModule: function (module) {
 		module.parent = this;
+		module.id = this.id + '_module_' + (this.modules.length+1);
 		this.modules.push(module);
 
 		this.updateBoundingBox();
@@ -165,6 +166,14 @@ SCG2.GO.GO.prototype = {
 			this.displayPosition = undefined;
 		}	
 
+		var i = this.modules.length;
+		while (i--) {
+			this.modules[i].update(now);
+			if(!this.modules[i].alive){
+				var deleted = this.modules.splice(i,1);
+			}
+		}
+
 		if(SCG2.gameLogics.isPaused /*|| (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)*/ || SCG2.gameLogics.gameOver || SCG2.modeller.options.isActive)
 		{
 			return;
@@ -198,13 +207,6 @@ SCG2.GO.GO.prototype = {
 			}
 		}
 
-		var i = this.modules.length;
-		while (i--) {
-			this.modules[i].update(now);
-			if(!this.modules[i].alive){
-				var deleted = this.modules.splice(i,1);
-			}
-		}
 		this.updateBoundingBox();
 
 		this.checkCollisions();

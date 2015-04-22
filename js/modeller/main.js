@@ -2,9 +2,7 @@ SCG2.modeller = {};
 SCG2.modeller.options = {
 	size: new Vector2(200,200),
 	isActive: false,
-	mousestate: {
-		position: new Vector2,
-	},
+	moduleAdding: false,
 	initControlsEvents: function(){
 		var that = this;
 		$(SCG2.canvas).on('mousemove',function(e){				
@@ -26,44 +24,66 @@ SCG2.modeller.options = {
 			absorbTouchEvent(event);
 			var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
 			var eventPos = pointerEventToXY(event);
-			SCG2.modeller.options.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
+			SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
 		},
 		mouseOut:function(event){
-			SCG2.modeller.options.mousestate.position = undefined;
+			//SCG2.gameControls.mousestate.position = undefined;
 		},
 		mouseUp: function(event){
-			if(SCG2.modeller.currentPlaceHolder){
-				var module = new SCG2.Module.Module($.extend(true,{position:SCG2.modeller.currentPlaceHolder.position},SCG2.modeller.modules[SCG2.modeller.currentPlaceHolder.moduleId]));
-				if(SCG2.modeller.currentPlaceHolder.siblings !== undefined){
-					for (var i = SCG2.modeller.currentPlaceHolder.siblings.length - 1; i >= 0; i--) {
+			if(SCG2.modeller.options.moduleAdding){
+				if(SCG2.modeller.currentPlaceHolder){
+					var module = new SCG2.Module.Module($.extend(true,{position:SCG2.modeller.currentPlaceHolder.position},SCG2.modeller.modules[SCG2.modeller.currentPlaceHolder.moduleId]));
+					if(SCG2.modeller.currentPlaceHolder.siblings !== undefined){
+						for (var i = SCG2.modeller.currentPlaceHolder.siblings.length - 1; i >= 0; i--) {
+							
+							switch(SCG2.modeller.currentPlaceHolder.siblings[i].siblingDirection){
+								case 'above':
+									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.above = module;
+									module.connectionInnerLinks.below = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
+									break;
+								case 'below':
+									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.below = module;
+									module.connectionInnerLinks.above = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
+									break;
+								case 'left':
+									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.left = module;
+									module.connectionInnerLinks.right = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
+									break;
+								case 'right':
+									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.right = module;
+									module.connectionInnerLinks.left = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
+									break;
+								default:
+									break;
+							}
+						};
 						
-
-						switch(SCG2.modeller.currentPlaceHolder.siblings[i].siblingDirection){
-							case 'above':
-								SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.above = module;
-								module.connectionInnerLinks.below = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-								break;
-							case 'below':
-								SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.below = module;
-								module.connectionInnerLinks.above = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-								break;
-							case 'left':
-								SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.left = module;
-								module.connectionInnerLinks.right = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-								break;
-							case 'right':
-								SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.right = module;
-								module.connectionInnerLinks.left = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-								break;
-							default:
-								break;
+					}
+					SCG2.modeller.go.addModule(module);
+				}
+			}
+			else{
+				var mo = [];
+				for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {					
+					if(SCG2.modeller.go.modules[i].mouseOver){
+						mo.push(SCG2.modeller.go.modules[i]);
+					}
+				};
+				if(mo.length == 0) {
+					SCG2.modeller.selectedModule.unselect();
+				}
+				else{
+					for (var i = mo.length - 1; i >= 0; i--) {
+						if(mo[i] == SCG2.modeller.selectedModule.module){continue;}
+						else {
+							SCG2.modeller.selectedModule.select(mo[i]);
+							break;
 						}
 					};
-					
 				}
-				SCG2.modeller.go.addModule(module);
-
 			}
+
+			SCG2.modeller.options.moduleAdding = false;
 			SCG2.nonplayableGo = [];
 			SCG2.modeller.panel.find('.moduleBlock').removeClass('selected');
 		},
@@ -72,6 +92,21 @@ SCG2.modeller.options = {
 
 SCG2.modeller.go = [];//new SCG2.GO.GO({direction: new Vector2.up()});
 SCG2.modeller.currentPlaceHolder = undefined;
+SCG2.modeller.selectedModule = {
+	module: undefined,
+	unselect: function(){
+		if(this.module){
+			this.module.selected = false,
+			this.module = undefined;	
+		}
+		
+	},
+	select: function(module){
+		this.unselect();
+		this.module = module;
+		this.module.selected = true;
+	}
+};
 SCG2.modeller.showDialog = function(){
 	SCG2.gameControls.scale.reset();
 	SCG2.gameControls.disableControlsEvents();
@@ -111,6 +146,8 @@ SCG2.modeller.showDialog = function(){
 }
 
 SCG2.modeller.panelBlockSelect = function(event){
+	SCG2.modeller.options.moduleAdding = true;
+	SCG2.modeller.selectedModule.unselect();
 	SCG2.nonplayableGo = [];
 	SCG2.modeller.panel.find('.moduleBlock').removeClass('selected');
 	var ct = $(event.currentTarget);
@@ -168,6 +205,14 @@ SCG2.modeller.panelBlockSelect = function(event){
 }
 
 SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder){
+	for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {
+		if(placeHolder.position.x >= SCG2.modeller.go.modules[i].position.x - SCG2.modeller.go.modules[i].size.x/2 && placeHolder.position.x <= SCG2.modeller.go.modules[i].position.x + SCG2.modeller.go.modules[i].size.x/2 &&
+		placeHolder.position.y >= SCG2.modeller.go.modules[i].position.y - SCG2.modeller.go.modules[i].size.y/2 && placeHolder.position.y <= SCG2.modeller.go.modules[i].position.y + SCG2.modeller.go.modules[i].size.y/2)
+		{
+			return;
+		}
+	};
+
 	for (var i = SCG2.nonplayableGo.length - 1; i >= 0; i--) {
 		if(SCG2.nonplayableGo[i].position.equal(placeHolder.position) && placeHolder.siblings.length > 0){
 			SCG2.nonplayableGo[i].siblings.push(placeHolder.siblings[0]);

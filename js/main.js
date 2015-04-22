@@ -149,10 +149,7 @@ SCG2.draw = function(){
 	
 	var i = SCG2.go.length;
 	while (i--) {
-		//if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
-		//{
-			SCG2.go[i].update(now);
-		//}
+		SCG2.go[i].update(now);
 		SCG2.go[i].render();
 		if(!SCG2.go[i].alive){
 			var deleted = SCG2.go.splice(i,1);
@@ -161,10 +158,7 @@ SCG2.draw = function(){
 
 	var ni = SCG2.nonplayableGo.length;
 	while (ni--) {
-		//if((!SCG2.gameLogics.isPaused || (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)) && !SCG2.gameLogics.gameOver)
-		//{
-			SCG2.nonplayableGo[ni].update(now);
-		//}
+		SCG2.nonplayableGo[ni].update(now);
 		SCG2.nonplayableGo[ni].render();
 		if(!SCG2.nonplayableGo[ni].alive){
 			var deleted = SCG2.nonplayableGo.splice(ni,1);

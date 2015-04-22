@@ -25,7 +25,10 @@ SCG2.Module.Module = function(init){
 	this.collided = false;
 	this.collidedSegmentIndices = [];
 	this.collisionPoints = [];
-
+	this.mouseOver = false;
+	this.selected = false;
+	this.hilightBox = new Box(new Vector2().substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
+	this.screenBox = undefined;
 }
 
 SCG2.Module.Module.prototype = {
@@ -45,9 +48,13 @@ SCG2.Module.Module.prototype = {
 		if(SCG2.gameLogics.drawBoundings)
 		{
 			this.renderBoundingSphere(this.collided);	
-		}		
+		}
 
 		SCG2.context.rotate(-this.angle);
+		if(this.selected || this.mouseOver){
+			 
+			this.hilightBox.render({strokeStyle:'rgb(255,255,0)',lineWidth: this.selected?3:1, fill: this.mouseOver, fillStyle: 'rgba(255,255,0,0.2)'});
+		}
 		SCG2.context.translate(-this.displayPosition.x,-this.displayPosition.y);
 	},
 
@@ -56,6 +63,21 @@ SCG2.Module.Module.prototype = {
 	},
 
 	update: function (now) {
+		this.mouseOver = false;
+		if((this.parent.selected && this.parent.displayPosition !== undefined && this.parent.displayBoundingBox().isPointInside(SCG2.gameControls.mousestate.position)) || SCG2.modeller.options.isActive){
+			var relativeToScreenCenter = this.parent.displayPosition.add(this.position.rotate(this.parent.angle,true,false),true);
+			this.screenBox = new Box(relativeToScreenCenter.substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
+			this.mouseOver = this.screenBox.isPointInside(SCG2.gameControls.mousestate.position);
+		}
+		else{
+			this.screenBox = undefined;
+		}
+
+		if(SCG2.gameLogics.isPaused /*|| (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)*/ || SCG2.gameLogics.gameOver || SCG2.modeller.options.isActive)
+		{
+			return;
+		}
+
 		this.innerUpdate(now);
 	},
 
