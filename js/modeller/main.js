@@ -86,6 +86,7 @@ SCG2.modeller.options = {
 			SCG2.modeller.options.moduleAdding = false;
 			SCG2.nonplayableGo = [];
 			SCG2.modeller.panel.find('.moduleBlock').removeClass('selected');
+			$(SCG2.canvas).css({'cursor': 'default'});
 		},
 	},
 }
@@ -98,6 +99,7 @@ SCG2.modeller.selectedModule = {
 		if(this.module){
 			this.module.selected = false,
 			this.module = undefined;	
+			SCG2.modeller.fillModulesPanel();
 		}
 		
 	},
@@ -105,6 +107,8 @@ SCG2.modeller.selectedModule = {
 		this.unselect();
 		this.module = module;
 		this.module.selected = true;
+		SCG2.modeller.fillComponentsPanel();
+		
 	}
 };
 SCG2.modeller.showDialog = function(){
@@ -113,6 +117,7 @@ SCG2.modeller.showDialog = function(){
 	SCG2.modeller.options.initControlsEvents();
 
 	SCG2.modeller.go = new SCG2.GO.GO({direction: new Vector2.up()});
+	SCG2.modeller.goStats = {};
 	//SCG2.modeller.go.push(new SCG2.GO.GO({direction: new Vector2.up()}));
 
 	if(SCG2.modeller.go.displayPosition === undefined){
@@ -130,22 +135,50 @@ SCG2.modeller.showDialog = function(){
 	var body = $(document.body);
 	addScene1Btn(body);
 
-	var panel = $('<div/>',{id:'modulesSelectPanel', css: {left: (SCG2.battlefield.default.width + 8) + 'px'}});
-	panel.append($('<div/>',{id:'module_internal_square',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_square.png)'}}));
-	panel.append($('<div/>',{id:'module_internal_triangle_bottomLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomLeft.png)'}}));
-	panel.append($('<div/>',{id:'module_internal_triangle_bottomRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomRight.png)'}}));
-	panel.append($('<div/>',{id:'module_internal_triangle_topLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topLeft.png)'}}));
-	panel.append($('<div/>',{id:'module_internal_triangle_topRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topRight.png)'}}));
+	SCG2.modeller.panel = $('<div/>',{id:'modulesSelectPanel', css: {left: (SCG2.battlefield.default.width + 8) + 'px'}});
+	SCG2.modeller.fillModulesPanel();
 
-	panel.on('click','.moduleBlock',function(e){
+	SCG2.modeller.panel.on('mousedown','.moduleBlock',function(e){
 		SCG2.modeller.panelBlockSelect(e);
 	});
-	SCG2.modeller.panel = panel;
-	body.append(panel);
+	SCG2.modeller.panel.on('click','.componentBlock',function(e){
+		SCG2.modeller.componentBlockSelect(e);
+	});
+	body.append(SCG2.modeller.panel);
 
 }
 
+SCG2.modeller.componentBlockSelect = function(event){
+	var ct = $(event.currentTarget);
+	switch(ct.attr('id'))
+	{
+		case 'remove_module':
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.left instanceof SCG2.Module.Module) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks.right = false;
+			}
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.right instanceof SCG2.Module.Module) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks.left = false;
+			}
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.above instanceof SCG2.Module.Module) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks.below = false;
+			}
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below instanceof SCG2.Module.Module) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.above = false;
+			}
+			SCG2.modeller.go.removeModule(SCG2.modeller.selectedModule.module);
+			break;
+		case 'control_Room':
+			SCG2.modeller.selectedModule.module.addComponent(new SCG2.Component.Component(SCG2.modeller.components[ct.attr('id')]))
+			break;
+		default:
+			break;
+	}
+
+	SCG2.modeller.selectedModule.unselect();
+}
+
 SCG2.modeller.panelBlockSelect = function(event){
+	$(SCG2.canvas).css({'cursor': 'move'});
 	SCG2.modeller.options.moduleAdding = true;
 	SCG2.modeller.selectedModule.unselect();
 	SCG2.nonplayableGo = [];
@@ -221,4 +254,50 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder){
 	};
 
 	SCG2.nonplayableGo.push(placeHolder);
+}
+
+SCG2.modeller.fillModulesPanel = function(){
+	if(SCG2.modeller.panel.attr('mode') == 'modules'){
+		return;
+	}
+	SCG2.modeller.panel.empty();
+	SCG2.modeller.panel.attr('mode','modules');
+	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_square',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_square.png)'}}));
+	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_bottomLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomLeft.png)'}}));
+	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_bottomRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomRight.png)'}}));
+	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_topLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topLeft.png)'}}));
+	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_topRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topRight.png)'}}));
+}
+
+SCG2.modeller.fillComponentsPanel = function(){
+	if(SCG2.modeller.panel.attr('mode') == 'components'){
+		return;
+	}
+	SCG2.modeller.panel.empty();
+	SCG2.modeller.panel.attr('mode','components');
+	SCG2.modeller.panel.append($('<div/>',{id:'control_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'}}));	
+	SCG2.modeller.panel.append($('<div/>',{id:'remove_module',class:'componentBlock',css: {'background-image':'url(content/images/remove20.png)', title: 'Remove module'}}));	
+}
+
+SCG2.modeller.showNotifications = function(){
+	var message = { message:'', state: 'bad'};
+	if(SCG2.modeller.go.modules.length == 0){
+		message.message = 'No modules added';
+	}
+	else{
+		if(!SCG2.modeller.go.stats.commandRoom || SCG2.modeller.go.stats.commandRoom == 0) {
+			message.message = 'No command room';
+		}
+	}
+
+	if(message.message!= '')
+	{
+		SCG2.context.save();  
+
+		SCG2.context.fillStyle = message.state == 'bad'?"red": message.state == 'warning'? "yellow": 'green' ;
+		SCG2.context.font = "28px serif";
+		SCG2.context.fillText(message.message, 20, 40);
+		SCG2.context.restore(); 	
+	}
+	
 }

@@ -55,6 +55,7 @@ SCG2.GO.GO = function(prop){
 	this.boundingBox = this.calculeteBoundingBox();
 	this.boundingSphere = this.calculateBoundingSphere();
 	this.creationTime = new Date;
+	this.stats = {};
 }
 
 SCG2.GO.GO.prototype = {
@@ -89,6 +90,18 @@ SCG2.GO.GO.prototype = {
 		this.modules.push(module);
 
 		this.updateBoundingBox();
+	},
+
+	removeModule: function(module){
+		for (var i = this.modules.length - 1; i >= 0; i--) {					
+			if(this.modules[i] == module){
+				this.modules[i].removeComponent();
+				var deleted = this.modules.splice(i,1);
+				this.updateBoundingBox();
+				return;
+			}
+		};
+		
 	},
 
 	updateBoundingBox: function(){

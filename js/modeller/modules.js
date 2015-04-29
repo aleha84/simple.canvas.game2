@@ -1,4 +1,4 @@
-//connectionInnerLinks -> false mean connction is possible
+//connectionInnerLinks -> false mean connection is possible
 
 SCG2.modeller.modules = {
 	init: function(){

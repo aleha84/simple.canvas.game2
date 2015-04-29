@@ -29,6 +29,7 @@ SCG2.Module.Module = function(init){
 	this.selected = false;
 	this.hilightBox = new Box(new Vector2().substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
 	this.screenBox = undefined;
+	this.component = undefined;
 }
 
 SCG2.Module.Module.prototype = {
@@ -43,6 +44,9 @@ SCG2.Module.Module.prototype = {
 		SCG2.context.rotate(this.angle);
 
 		SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
+		if(SCG2.modeller.options.isActive && this.component && this.component.img){
+			SCG2.context.drawImage(this.component.img,this.component.size.x/-2,this.component.size.y/-2,this.component.size.x,this.component.size.y);	
+		}
 		this.innerRender();
 
 		if(SCG2.gameLogics.drawBoundings)
@@ -83,6 +87,18 @@ SCG2.Module.Module.prototype = {
 
 	innerUpdate: function(now){
 
+	},
+
+	addComponent: function(component){
+		this.component = component;
+		this.component.addStats(this.parent.stats);
+	},
+
+	removeComponent: function(){
+		if(this.component){
+			this.component.removeStats(this.parent.stats);
+			this.component = undefined;	
+		}
 	},
 
 	calculateBoundingSphere: function  () {

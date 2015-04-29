@@ -46,6 +46,7 @@ SCG2.src = {
 	module_internal_triangle_bottomRight: 'content/images/module_internal_triangle_bottomRight.png',
 	module_internal_triangle_topLeft: 'content/images/module_internal_triangle_topLeft.png',
 	module_internal_triangle_topRight: 'content/images/module_internal_triangle_topRight.png',
+	component_commandRoom: 'content/images/commandRoom.png'
 };
 SCG2.images = {
 }
@@ -170,7 +171,9 @@ SCG2.draw = function(){
 		SCG2.gameLogics.isPausedStep =false;
 	}
 
-
-	//SCG2.frameCounter.renderConsumption.end = new Date;
 	SCG2.frameCounter.doWork(now);
+
+	if(SCG2.modeller.options.isActive){
+		SCG2.modeller.showNotifications();
+	}
 }

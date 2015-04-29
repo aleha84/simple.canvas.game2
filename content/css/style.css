@@ -1,3 +1,11 @@
+* {
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
 #modulesSelectPanel
 {
 	position:absolute;
@@ -5,7 +13,7 @@
 	  background-color: lightgray;
 }
 
-.moduleBlock
+.moduleBlock, .componentBlock
 {
 	width:30px;
 	height:30px;
@@ -15,9 +23,10 @@
 	border-style: solid;
 	border-color: transparent;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
-.moduleBlock:hover
+.moduleBlock:hover, .componentBlock:hover
 {
 	border-color: yellow;
 }
