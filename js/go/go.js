@@ -56,6 +56,7 @@ SCG2.GO.GO = function(prop){
 	this.boundingSphere = this.calculateBoundingSphere();
 	this.creationTime = new Date;
 	this.stats = {};
+	this.moduleCounter = 0;
 }
 
 SCG2.GO.GO.prototype = {
@@ -86,7 +87,7 @@ SCG2.GO.GO.prototype = {
 
 	addModule: function (module) {
 		module.parent = this;
-		module.id = this.id + '_module_' + (this.modules.length+1);
+		module.id = this.id + '_module_' + (++this.moduleCounter);
 		this.modules.push(module);
 
 		this.updateBoundingBox();

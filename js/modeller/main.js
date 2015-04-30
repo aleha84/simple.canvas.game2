@@ -60,6 +60,7 @@ SCG2.modeller.options = {
 						
 					}
 					SCG2.modeller.go.addModule(module);
+					SCG2.modeller.findDisconnectedModules();
 				}
 			}
 			else{
@@ -150,28 +151,28 @@ SCG2.modeller.showDialog = function(){
 
 SCG2.modeller.componentBlockSelect = function(event){
 	var ct = $(event.currentTarget);
-	switch(ct.attr('id'))
-	{
-		case 'remove_module':
-			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.left instanceof SCG2.Module.Module) {
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks.right = false;
-			}
-			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.right instanceof SCG2.Module.Module) {
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks.left = false;
-			}
-			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.above instanceof SCG2.Module.Module) {
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks.below = false;
-			}
-			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below instanceof SCG2.Module.Module) {
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.above = false;
-			}
-			SCG2.modeller.go.removeModule(SCG2.modeller.selectedModule.module);
-			break;
-		case 'control_Room':
-			SCG2.modeller.selectedModule.module.addComponent(new SCG2.Component.Component(SCG2.modeller.components[ct.attr('id')]))
-			break;
-		default:
-			break;
+	var componentId = ct.attr('id');
+	if(componentId == 'remove_module'){
+		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.left instanceof SCG2.Module.Module) {
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks.right = false;
+		}
+		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.right instanceof SCG2.Module.Module) {
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks.left = false;
+		}
+		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.above instanceof SCG2.Module.Module) {
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks.below = false;
+		}
+		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below instanceof SCG2.Module.Module) {
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.above = false;
+		}
+		SCG2.modeller.go.removeModule(SCG2.modeller.selectedModule.module);
+		SCG2.modeller.findDisconnectedModules();
+	}
+	else if(componentId == 'remove_component'){
+		SCG2.modeller.selectedModule.module.removeComponent();
+	}
+	else if(componentId != ''){
+		SCG2.modeller.selectedModule.module.addComponent(new SCG2.Component.Component(SCG2.modeller.components[ct.attr('id')]))
 	}
 
 	SCG2.modeller.selectedModule.unselect();
@@ -275,8 +276,14 @@ SCG2.modeller.fillComponentsPanel = function(){
 	}
 	SCG2.modeller.panel.empty();
 	SCG2.modeller.panel.attr('mode','components');
-	SCG2.modeller.panel.append($('<div/>',{id:'control_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'}}));	
-	SCG2.modeller.panel.append($('<div/>',{id:'remove_module',class:'componentBlock',css: {'background-image':'url(content/images/remove20.png)', title: 'Remove module'}}));	
+	if(SCG2.modeller.selectedModule.module.component == undefined){
+		SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'}}));		
+	}
+	else {
+		SCG2.modeller.panel.append($('<div/>',{id:'remove_component',class:'componentBlock',css: {'background-image':'url(content/images/removeComponent30.png)'},title: 'Remove component'}));	
+	}
+	
+	SCG2.modeller.panel.append($('<div/>',{id:'remove_module',class:'componentBlock',css: {'background-image':'url(content/images/remove20.png)'},title: 'Remove module'}));	
 }
 
 SCG2.modeller.showNotifications = function(){
@@ -286,7 +293,10 @@ SCG2.modeller.showNotifications = function(){
 	}
 	else{
 		if(!SCG2.modeller.go.stats.commandRoom || SCG2.modeller.go.stats.commandRoom == 0) {
-			message.message = 'No command room';
+			message.message += 'No command room';
+		}
+		if(SCG2.modeller.go.stats.disconnectedModules) {
+			message.message +=  (message.message!= '' ? '\n' : '') +  'Modules disconnected';
 		}
 	}
 
@@ -299,5 +309,46 @@ SCG2.modeller.showNotifications = function(){
 		SCG2.context.fillText(message.message, 20, 40);
 		SCG2.context.restore(); 	
 	}
-	
+}
+
+SCG2.modeller.findDisconnectedModules = function(){
+	if(SCG2.modeller.go.modules.length == 1){ return; }
+	var disconnectedModules = [];
+	this.checkedModules = [];
+
+	this.internal = function(module){
+		if(this.checkedModules.indexOf(module.id) != -1){
+			return;
+		}
+		this.checkedModules.push(module.id);
+		if(module.connectionInnerLinks.left instanceof SCG2.Module.Module) {
+			this.internal(module.connectionInnerLinks.left);
+		}
+		if(module.connectionInnerLinks.right instanceof SCG2.Module.Module) {
+			this.internal(module.connectionInnerLinks.right);	
+		}
+		if(module.connectionInnerLinks.above instanceof SCG2.Module.Module) {
+			this.internal(module.connectionInnerLinks.above);
+		}
+		if(module.connectionInnerLinks.below instanceof SCG2.Module.Module) {
+			this.internal(module.connectionInnerLinks.below);
+		}
+	}
+
+	this.internal(SCG2.modeller.go.modules[0]);
+	for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {			
+		var moduleFound = false;
+		for (var j = this.checkedModules.length - 1; j >= 0; j--) {
+			if(SCG2.modeller.go.modules[i].id == this.checkedModules[j])
+			{
+				moduleFound = true;
+				break;
+			}
+		};
+		if(!moduleFound){
+			disconnectedModules.push(SCG2.modeller.go.modules[i].id)
+		}
+	};
+
+	SCG2.modeller.go.stats.disconnectedModules = disconnectedModules.length > 0;
 }

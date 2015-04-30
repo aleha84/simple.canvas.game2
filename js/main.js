@@ -101,6 +101,7 @@ $(document).ready(function(){
 		// }));
 		// SCG2.go.push(SCG2.Player);
 		SCG2.modeller.modules.init();
+		SCG2.modeller.components.init();
 		SCG2.initScene1();
 		SCG2.animate();
 	});
