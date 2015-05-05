@@ -1,3 +1,8 @@
+/// <reference path="../game.js" />
+/// <reference path="../main.js" />
+/// <reference path="../utils/vector2.js" />
+/// <reference path="../lib/jquery.js" />
+
 SCG2.modeller = {};
 SCG2.modeller.options = {
 	size: new Vector2(200,200),
@@ -277,6 +282,7 @@ SCG2.modeller.fillComponentsPanel = function(){
 	SCG2.modeller.panel.empty();
 	SCG2.modeller.panel.attr('mode','components');
 	if(SCG2.modeller.selectedModule.module.component == undefined){
+		if(SCG2.modeller.)
 		SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'}}));		
 	}
 	else {
@@ -284,6 +290,10 @@ SCG2.modeller.fillComponentsPanel = function(){
 	}
 	
 	SCG2.modeller.panel.append($('<div/>',{id:'remove_module',class:'componentBlock',css: {'background-image':'url(content/images/remove20.png)'},title: 'Remove module'}));	
+}
+
+SCG2.modeller.is2x2Possible = function(module){
+
 }
 
 SCG2.modeller.showNotifications = function(){
