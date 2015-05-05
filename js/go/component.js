@@ -9,4 +9,5 @@ SCG2.Component.Component = function (init) {
 	{
 		$.extend(true,this,init);
 	}
+	this.parents = [];
 }

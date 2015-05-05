@@ -91,6 +91,7 @@ SCG2.Module.Module.prototype = {
 
 	addComponent: function(component){
 		this.component = component;
+		this.component.parents.push(this);
 		this.component.addStats(this.parent.stats);
 	},
 

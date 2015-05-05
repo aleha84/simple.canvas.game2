@@ -154,6 +154,18 @@ SCG2.modeller.showDialog = function(){
 
 }
 
+SCG2.modeller.selectedModuleComponentRemove = function(){
+	if(SCG2.modeller.selectedModule.module.component.parents.length > 1){
+		var componentParents = SCG2.modeller.selectedModule.module.component.parents;
+		for (var i = componentParents.length - 1; i >= 0; i--) {
+			componentParents[i].removeComponent();
+		};
+	}
+	else{
+		SCG2.modeller.selectedModule.module.removeComponent();	
+	}
+}
+
 SCG2.modeller.componentBlockSelect = function(event){
 	var ct = $(event.currentTarget);
 	var componentId = ct.attr('id');
@@ -170,14 +182,31 @@ SCG2.modeller.componentBlockSelect = function(event){
 		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below instanceof SCG2.Module.Module) {
 			SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.above = false;
 		}
+		SCG2.modeller.selectedModuleComponentRemove();
 		SCG2.modeller.go.removeModule(SCG2.modeller.selectedModule.module);
 		SCG2.modeller.findDisconnectedModules();
 	}
 	else if(componentId == 'remove_component'){
-		SCG2.modeller.selectedModule.module.removeComponent();
+		SCG2.modeller.selectedModuleComponentRemove();
 	}
 	else if(componentId != ''){
-		SCG2.modeller.selectedModule.module.addComponent(new SCG2.Component.Component(SCG2.modeller.components[ct.attr('id')]))
+		var id = ct.attr('id');
+		var size = ct.attr('componentSize');
+		var component = undefined;
+		if(size!=undefined){
+			id = id.replace('_'+size,'');
+			component = new SCG2.Component.Component(SCG2.modeller.components[id]);
+			if(size == '2x'){
+				SCG2.modeller.selectedModule.module.addComponent(component);
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.addComponent(component);
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.addComponent(component);
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.right.addComponent(component);
+			}
+		}
+		else{
+			SCG2.modeller.selectedModule.module.addComponent(new SCG2.Component.Component(SCG2.modeller.components[id]));
+		}
+		
 	}
 
 	SCG2.modeller.selectedModule.unselect();
@@ -276,14 +305,16 @@ SCG2.modeller.fillModulesPanel = function(){
 }
 
 SCG2.modeller.fillComponentsPanel = function(){
-	if(SCG2.modeller.panel.attr('mode') == 'components'){
-		return;
-	}
+	// if(SCG2.modeller.panel.attr('mode') == 'components'){
+	// 	return;
+	// }
 	SCG2.modeller.panel.empty();
 	SCG2.modeller.panel.attr('mode','components');
 	if(SCG2.modeller.selectedModule.module.component == undefined){
-		if(SCG2.modeller.)
-		SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'}}));		
+		if(SCG2.modeller.is2x2Possible(SCG2.modeller.selectedModule.module)){
+			SCG2.modeller.panel.append($('<div/>',{id:'command_Room_2x',componentSize:'2x' ,class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room 2x'}));		
+		}
+		SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room'}));			
 	}
 	else {
 		SCG2.modeller.panel.append($('<div/>',{id:'remove_component',class:'componentBlock',css: {'background-image':'url(content/images/removeComponent30.png)'},title: 'Remove component'}));	
@@ -293,7 +324,14 @@ SCG2.modeller.fillComponentsPanel = function(){
 }
 
 SCG2.modeller.is2x2Possible = function(module){
+	return SCG2.modeller.isSquare(module) && 
+		(module.connectionInnerLinks.right instanceof SCG2.Module.Module && SCG2.modeller.isSquare(module.connectionInnerLinks.right) && module.connectionInnerLinks.right.component == undefined) && 
+		(module.connectionInnerLinks.below instanceof SCG2.Module.Module && SCG2.modeller.isSquare(module.connectionInnerLinks.below) && module.connectionInnerLinks.below.component == undefined) && 
+		(module.connectionInnerLinks.below.connectionInnerLinks.right instanceof SCG2.Module.Module && SCG2.modeller.isSquare(module.connectionInnerLinks.below.connectionInnerLinks.right) && module.connectionInnerLinks.below.connectionInnerLinks.right.component == undefined);
+}
 
+SCG2.modeller.isSquare = function(module){
+	return !(module.connectionInnerLinks.left | module.connectionInnerLinks.right | module.connectionInnerLinks.above | module.connectionInnerLinks.below);
 }
 
 SCG2.modeller.showNotifications = function(){
