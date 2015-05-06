@@ -46,7 +46,8 @@ SCG2.src = {
 	module_internal_triangle_bottomRight: 'content/images/module_internal_triangle_bottomRight.png',
 	module_internal_triangle_topLeft: 'content/images/module_internal_triangle_topLeft.png',
 	module_internal_triangle_topRight: 'content/images/module_internal_triangle_topRight.png',
-	component_commandRoom: 'content/images/commandRoom.png'
+	component_commandRoom: 'content/images/commandRoom.png',
+	component_smallThruster: 'content/images/smallThruster.png',
 };
 SCG2.images = {
 }
@@ -107,12 +108,13 @@ $(document).ready(function(){
 	});
 });
 
-SCG2.initScene1 = function(){
-	$('#showScene, #modulesSelectPanel').remove();
+SCG2.initScene1 = function(testGo){
+	$('.showScene, #modulesSelectPanel').remove();
 	SCG2.gameLogics.isPaused = false;
 	SCG2.modeller.options.isActive = false;
-	var fighter = new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2),selected: true});
+	var fighter = testGo || new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2)});
 	fighter.playerControllable = true;
+	fighter.selected = true;
 	SCG2.defaultScene = {};
 	SCG2.defaultScene.go = [];
 	SCG2.defaultScene.go.push(fighter);
@@ -127,7 +129,7 @@ SCG2.initScene1 = function(){
 	SCG2.modeller.options.disableControlsEvents();
 	SCG2.gameControls.initControlsEvents();
 
-	addModellerBtn($(document.body));
+	addModellerBtn($(document.body),testGo);
 }
 
 SCG2.animate = function() {

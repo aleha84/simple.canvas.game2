@@ -258,12 +258,17 @@ function absorbTouchEvent(event) {
   
 }
 
-function addModellerBtn(container){
-  var showModellerDialogBtn = $('<input />', { id: 'showModellerDialog', type:'button', value: 'modeller', on: {'click':function(){ SCG2.modeller.showDialog(); }}});
+function addModellerBtn(container,testGo){
+  var showModellerDialogBtn = $('<input />', { id: 'showModellerDialog', type:'button', value: (testGo?'back to ':'')+'modeller', on: {'click':function(){ 
+    SCG2.modeller.showDialog(testGo); 
+  }}});
   container.append(showModellerDialogBtn);
 }
 
-function addScene1Btn(container){
-  var showModellerDialogBtn = $('<input />', { id: 'showScene', type:'button', value: 'modeller', on: {'click':function(){ SCG2.initScene1(); }}});
+function addScene1Btn(container, testGo){
+  var showModellerDialogBtn = $('<input />', { class: 'showScene', id: 'showScene' + (testGo? 'testGo':''), type:'button', value: 'scene' + (testGo? ' test fly': ''), on: {'click':function(){ 
+    if(!testGo) { SCG2.initScene1(); }
+    else if(testGo.checkStats()){SCG2.initScene1(testGo);}    
+  }}});
   container.append(showModellerDialogBtn);
 }

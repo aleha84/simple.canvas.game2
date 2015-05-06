@@ -117,12 +117,12 @@ SCG2.modeller.selectedModule = {
 		
 	}
 };
-SCG2.modeller.showDialog = function(){
+SCG2.modeller.showDialog = function(testGo){
 	SCG2.gameControls.scale.reset();
 	SCG2.gameControls.disableControlsEvents();
 	SCG2.modeller.options.initControlsEvents();
 
-	SCG2.modeller.go = new SCG2.GO.GO({direction: new Vector2.up()});
+	SCG2.modeller.go = testGo || new SCG2.GO.GO({direction: new Vector2.up()});
 	SCG2.modeller.goStats = {};
 	//SCG2.modeller.go.push(new SCG2.GO.GO({direction: new Vector2.up()}));
 
@@ -140,6 +140,7 @@ SCG2.modeller.showDialog = function(){
 	$('#showModellerDialog').remove();
 	var body = $(document.body);
 	addScene1Btn(body);
+	addScene1Btn(body,SCG2.modeller.go);
 
 	SCG2.modeller.panel = $('<div/>',{id:'modulesSelectPanel', css: {left: (SCG2.battlefield.default.width + 8) + 'px'}});
 	SCG2.modeller.fillModulesPanel();
@@ -155,6 +156,7 @@ SCG2.modeller.showDialog = function(){
 }
 
 SCG2.modeller.selectedModuleComponentRemove = function(){
+	if(!SCG2.modeller.selectedModule.module.component){return;}
 	if(SCG2.modeller.selectedModule.module.component.parents.length > 1){
 		var componentParents = SCG2.modeller.selectedModule.module.component.parents;
 		for (var i = componentParents.length - 1; i >= 0; i--) {
@@ -315,6 +317,7 @@ SCG2.modeller.fillComponentsPanel = function(){
 			SCG2.modeller.panel.append($('<div/>',{id:'command_Room_2x',componentSize:'2x' ,class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room 2x'}));		
 		}
 		SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room'}));			
+		SCG2.modeller.panel.append($('<div/>',{id:'small_Thruster',class:'componentBlock',css: {'background-image':'url(content/images/smallThruster.png)'},title: 'Small thruster'}));			
 	}
 	else {
 		SCG2.modeller.panel.append($('<div/>',{id:'remove_component',class:'componentBlock',css: {'background-image':'url(content/images/removeComponent30.png)'},title: 'Remove component'}));	
@@ -335,28 +338,26 @@ SCG2.modeller.isSquare = function(module){
 }
 
 SCG2.modeller.showNotifications = function(){
-	var message = { message:'', state: 'bad'};
-	if(SCG2.modeller.go.modules.length == 0){
-		message.message = 'No modules added';
-	}
-	else{
-		if(!SCG2.modeller.go.stats.commandRoom || SCG2.modeller.go.stats.commandRoom == 0) {
-			message.message += 'No command room';
-		}
-		if(SCG2.modeller.go.stats.disconnectedModules) {
-			message.message +=  (message.message!= '' ? '\n' : '') +  'Modules disconnected';
-		}
-	}
+	var message = 
+		{ 
+			noModules: {message:'No modules added', state: 'fatal', show: (SCG2.modeller.go.modules.length == 0)},
+			commandRoom:{message:'No command room', state: 'fatal', show: !SCG2.modeller.go.stats.commandRoom || SCG2.modeller.go.stats.commandRoom == 0},
+			disconnected:{message:'Modules disconnected', state: 'fatal',show: SCG2.modeller.go.stats.disconnectedModules},
+			thruster:{message:'Ship is static', state: 'warning',show: false},
+		};
 
-	if(message.message!= '')
-	{
-		SCG2.context.save();  
+	var rowShiftY = 40;
+	for (var m in message) {
+        if (message.hasOwnProperty(m) && message[m].show) {
+            SCG2.context.save();  
 
-		SCG2.context.fillStyle = message.state == 'bad'?"red": message.state == 'warning'? "yellow": 'green' ;
-		SCG2.context.font = "28px serif";
-		SCG2.context.fillText(message.message, 20, 40);
-		SCG2.context.restore(); 	
-	}
+			SCG2.context.fillStyle = message[m].state == 'fatal'?"red": message[m].state == 'warning'? "yellow": 'green' ;
+			SCG2.context.font = "28px serif";
+			SCG2.context.fillText(message[m].message, 20, rowShiftY);
+			SCG2.context.restore(); 
+			rowShiftY+=30;
+        }
+    }
 }
 
 SCG2.modeller.findDisconnectedModules = function(){

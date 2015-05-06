@@ -22,6 +22,28 @@ SCG2.modeller.components = {
 			},
 			img: SCG2.images.component_commandRoom,
 		}
+		this.small_Thruster = {
+			size: new Vector2(30,30),
+			addStats: function(stats){
+				if(stats.speed === undefined){
+					stats.speed = 1;
+				}
+				else{
+					if(stats.speed < 0) {stats.speed = 0;}
+					stats.speed++;	
+				}
+			},
+			removeStats:function(stats){
+				if(stats.speed === undefined){
+					stats.speed = 0;
+				}
+				else{
+					stats.speed--;	
+					if(stats.speed < 0) {stats.speed = 0;}
+				}
+			},
+			img: SCG2.images.component_smallThruster,
+		}
 		
 	}
 	

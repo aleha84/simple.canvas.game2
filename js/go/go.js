@@ -196,27 +196,29 @@ SCG2.GO.GO.prototype = {
 		if(this.playerControllable && SCG2.gameControls.selectedGOs.length > 0 && SCG2.gameControls.selectedGOs[0] === this)
 		{
 			var delta = undefined;
+			var _speed = this.speed || this.stats.speed;
+			var _rotationSpeed = this.rotationSpeed || this.stats.rotationSpeed;
 			if(SCG2.gameControls.goControl.accelerate)
 			{
-				delta = this.direction.mul(this.speed);
+				delta = this.direction.mul(_speed);
 				this.position.add(delta);
 			}
 
 			if(SCG2.gameControls.goControl.reverse)
 			{
-				delta = this.direction.mul(-1*this.speed)
+				delta = this.direction.mul(-1*_speed)
 				this.position.add(delta);
 			}
 
 			if(SCG2.gameControls.goControl.rotateLeft)
 			{
-				this.angle -= this.rotationSpeed;
+				this.angle -= _rotationSpeed;
 				this.direction = this.initialDirection.rotate(this.angle,true,false);
 			}
 
 			if(SCG2.gameControls.goControl.rotateRight)
 			{
-				this.angle += this.rotationSpeed;
+				this.angle += _rotationSpeed;
 				this.direction = this.initialDirection.rotate(this.angle,true,false);
 			}
 		}
@@ -338,6 +340,14 @@ SCG2.GO.GO.prototype = {
 			}
 			
 		}
+	},
+
+	checkStats: function(){
+		if(this.stats == undefined){ return false; }
+		if(this.modules.length < 2) { return false; }
+		if(this.stats.commandRoom == undefined || this.stats.commandRoom < 1) {return false;}
+
+		return true;
 	}
 }
 
