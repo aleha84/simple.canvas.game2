@@ -51,7 +51,7 @@ SCG2.Module.Module.prototype = {
 
 		if(SCG2.gameLogics.drawBoundings)
 		{
-			this.renderBoundingSphere(this.collided);	
+			this.renderBoundingSphere(SCG2.gameLogics.fillBoundings && this.collided);	
 		}
 
 		SCG2.context.rotate(-this.angle);

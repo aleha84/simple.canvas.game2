@@ -21,7 +21,8 @@ SCG2.gameLogics = {
 	isPaused: false,
 	isPausedStep: false,
 	gameOver: false,
-	drawBoundings: true
+	drawBoundings: true,
+	fillBoundings: false,
 }
 
 //main game objects array

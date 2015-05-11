@@ -123,6 +123,10 @@ SCG2.modeller.showDialog = function(testGo){
 	SCG2.modeller.options.initControlsEvents();
 
 	SCG2.modeller.go = testGo || new SCG2.GO.GO({direction: new Vector2.up()});
+	//reset position and angle
+	SCG2.modeller.go.position = new Vector2;
+	SCG2.modeller.go.angle = 0;
+
 	SCG2.modeller.goStats = {};
 	//SCG2.modeller.go.push(new SCG2.GO.GO({direction: new Vector2.up()}));
 
@@ -316,8 +320,13 @@ SCG2.modeller.fillComponentsPanel = function(){
 		if(SCG2.modeller.is2x2Possible(SCG2.modeller.selectedModule.module)){
 			SCG2.modeller.panel.append($('<div/>',{id:'command_Room_2x',componentSize:'2x' ,class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room 2x'}));		
 		}
-		SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room'}));			
-		SCG2.modeller.panel.append($('<div/>',{id:'small_Thruster',class:'componentBlock',css: {'background-image':'url(content/images/smallThruster.png)'},title: 'Small thruster'}));			
+
+		//only sqare module components
+		if(SCG2.modeller.isSquare(SCG2.modeller.selectedModule.module)){
+			SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room'}));			
+			SCG2.modeller.panel.append($('<div/>',{id:'small_Thruster',class:'componentBlock',css: {'background-image':'url(content/images/smallThruster.png)'},title: 'Small thruster'}));				
+		}
+		
 	}
 	else {
 		SCG2.modeller.panel.append($('<div/>',{id:'remove_component',class:'componentBlock',css: {'background-image':'url(content/images/removeComponent30.png)'},title: 'Remove component'}));	

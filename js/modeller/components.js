@@ -24,6 +24,7 @@ SCG2.modeller.components = {
 		}
 		this.small_Thruster = {
 			size: new Vector2(30,30),
+			rotationSpeedIncrement: 0.025,
 			addStats: function(stats){
 				if(stats.speed === undefined){
 					stats.speed = 1;
@@ -31,6 +32,14 @@ SCG2.modeller.components = {
 				else{
 					if(stats.speed < 0) {stats.speed = 0;}
 					stats.speed++;	
+				}
+				
+				if(stats.rotationSpeed === undefined){
+					stats.rotationSpeed = this.rotationSpeedIncrement;
+				}
+				else{
+					if(stats.rotationSpeed < 0) {stats.rotationSpeed = 0;}
+					stats.rotationSpeed+=this.rotationSpeedIncrement;	
 				}
 			},
 			removeStats:function(stats){
@@ -40,6 +49,14 @@ SCG2.modeller.components = {
 				else{
 					stats.speed--;	
 					if(stats.speed < 0) {stats.speed = 0;}
+				}
+
+				if(stats.rotationSpeed === undefined){
+					stats.rotationSpeed = 0;
+				}
+				else{
+					stats.rotationSpeed-=this.rotationSpeedIncrement;	
+					if(stats.rotationSpeed < 0) {stats.rotationSpeed = 0;}
 				}
 			},
 			img: SCG2.images.component_smallThruster,

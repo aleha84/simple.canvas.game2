@@ -154,8 +154,8 @@ SCG2.GO.GO.prototype = {
 		SCG2.context.rotate(-this.angle);
 		if(SCG2.gameLogics.drawBoundings)
 		{
-			this.renderBoundingBox(this.collided);	
-			this.renderBoundingSphere(this.collided);	
+			this.renderBoundingBox(SCG2.gameLogics.fillBoundings && this.collided);	
+			this.renderBoundingSphere(SCG2.gameLogics.fillBoundings && this.collided);	
 		}
 		if(this.selected)
 		{
