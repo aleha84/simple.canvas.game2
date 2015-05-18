@@ -37,3 +37,9 @@
 	border-width: 3px;
 	border-color: green;
 }
+
+.componentDivider
+{
+	text-align: center;
+  	padding: 2px 0px;
+}

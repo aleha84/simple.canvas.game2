@@ -37,35 +37,7 @@ SCG2.modeller.options = {
 		mouseUp: function(event){
 			if(SCG2.modeller.options.moduleAdding){
 				if(SCG2.modeller.currentPlaceHolder){
-					var module = new SCG2.Module.Module($.extend(true,{position:SCG2.modeller.currentPlaceHolder.position},SCG2.modeller.modules[SCG2.modeller.currentPlaceHolder.moduleId]));
-					if(SCG2.modeller.currentPlaceHolder.siblings !== undefined){
-						for (var i = SCG2.modeller.currentPlaceHolder.siblings.length - 1; i >= 0; i--) {
-							
-							switch(SCG2.modeller.currentPlaceHolder.siblings[i].siblingDirection){
-								case 'above':
-									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.above = module;
-									module.connectionInnerLinks.below = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-									break;
-								case 'below':
-									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.below = module;
-									module.connectionInnerLinks.above = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-									break;
-								case 'left':
-									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.left = module;
-									module.connectionInnerLinks.right = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-									break;
-								case 'right':
-									SCG2.modeller.currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.right = module;
-									module.connectionInnerLinks.left = SCG2.modeller.currentPlaceHolder.siblings[i].sibling;
-									break;
-								default:
-									break;
-							}
-						};
-						
-					}
-					SCG2.modeller.go.addModule(module);
-					SCG2.modeller.findDisconnectedModules();
+					SCG2.modeller.addModule(SCG2.modeller.currentPlaceHolder);
 				}
 			}
 			else{
@@ -99,6 +71,7 @@ SCG2.modeller.options = {
 
 SCG2.modeller.go = [];//new SCG2.GO.GO({direction: new Vector2.up()});
 SCG2.modeller.currentPlaceHolder = undefined;
+SCG2.modeller.restrictionLines = [];
 SCG2.modeller.selectedModule = {
 	module: undefined,
 	unselect: function(){
@@ -127,6 +100,11 @@ SCG2.modeller.showDialog = function(testGo){
 	SCG2.modeller.go.position = new Vector2;
 	SCG2.modeller.go.angle = 0;
 
+	if(testGo)
+	{
+		SCG2.modeller.go.updateBoundingBox();
+	}
+
 	SCG2.modeller.goStats = {};
 	//SCG2.modeller.go.push(new SCG2.GO.GO({direction: new Vector2.up()}));
 
@@ -144,7 +122,7 @@ SCG2.modeller.showDialog = function(testGo){
 	$('#showModellerDialog').remove();
 	var body = $(document.body);
 	addScene1Btn(body);
-	addScene1Btn(body,SCG2.modeller.go);
+	addScene1Btn(body,true);
 
 	SCG2.modeller.panel = $('<div/>',{id:'modulesSelectPanel', css: {left: (SCG2.battlefield.default.width + 8) + 'px'}});
 	SCG2.modeller.fillModulesPanel();
@@ -156,6 +134,10 @@ SCG2.modeller.showDialog = function(testGo){
 		SCG2.modeller.componentBlockSelect(e);
 	});
 	body.append(SCG2.modeller.panel);
+
+	body.append($('<input />', { id: 'getPredefined', type:'button', value: 'predefined', on: {'click':function(){ 
+    SCG2.modeller.loadPredefined(); 
+  	}}}));
 
 }
 
@@ -203,10 +185,11 @@ SCG2.modeller.componentBlockSelect = function(event){
 			id = id.replace('_'+size,'');
 			component = new SCG2.Component.Component(SCG2.modeller.components[id]);
 			if(size == '2x'){
-				SCG2.modeller.selectedModule.module.addComponent(component);
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.addComponent(component);
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.addComponent(component);
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.right.addComponent(component);
+				component.componentSize = size;
+				SCG2.modeller.selectedModule.module.addComponent(component,0);
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.addComponent(component,1);
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.addComponent(component,2);
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.right.addComponent(component,3);
 			}
 		}
 		else{
@@ -227,74 +210,8 @@ SCG2.modeller.panelBlockSelect = function(event){
 	var ct = $(event.currentTarget);
 	ct.addClass('selected');
 	var moduleId = ct.attr('id');
-	if(SCG2.modeller.go.modules.length == 0){
-		var ph = new SCG2.modeller.PlaceHolder({position: new Vector2, size: SCG2.modeller.modules[moduleId].size, moduleId: moduleId});
-		SCG2.nonplayableGo.push(ph);
-	}
-	else{
-		for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {
-			if(SCG2.modeller.go.modules[i].connectionInnerLinks) {
-				if(!SCG2.modeller.go.modules[i].connectionInnerLinks.above && !SCG2.modeller.modules[moduleId].connectionInnerLinks.below){
-					var ph = new SCG2.modeller.PlaceHolder({position: SCG2.modeller.go.modules[i].position.clone().substract(new Vector2(0,SCG2.modeller.go.modules[i].size.y/2 + SCG2.modeller.modules[moduleId].size.y/2),true)
-						, size: SCG2.modeller.modules[moduleId].size
-						, moduleId: moduleId
-						, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: 'above'}] 
-					});
-					SCG2.modeller.checkPlaceHolderExistenceByPosition(ph);
-				}
-				if(!SCG2.modeller.go.modules[i].connectionInnerLinks.below && !SCG2.modeller.modules[moduleId].connectionInnerLinks.above){
-					var ph = new SCG2.modeller.PlaceHolder({position: SCG2.modeller.go.modules[i].position.clone().add(new Vector2(0,SCG2.modeller.go.modules[i].size.y/2 + SCG2.modeller.modules[moduleId].size.y/2),true)
-						, size: SCG2.modeller.modules[moduleId].size
-						, moduleId: moduleId
-						, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: 'below'}] 
-					});
-					SCG2.modeller.checkPlaceHolderExistenceByPosition(ph);
-				}
-				if(!SCG2.modeller.go.modules[i].connectionInnerLinks.left && !SCG2.modeller.modules[moduleId].connectionInnerLinks.right){
-					var ph = new SCG2.modeller.PlaceHolder({position: SCG2.modeller.go.modules[i].position.clone().substract(new Vector2(SCG2.modeller.go.modules[i].size.x/2 + SCG2.modeller.modules[moduleId].size.x/2,0),true)
-						, size: SCG2.modeller.modules[moduleId].size
-						, moduleId: moduleId
-						, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: 'left'}] 
-					});
-					SCG2.modeller.checkPlaceHolderExistenceByPosition(ph);
-				}
-				if(!SCG2.modeller.go.modules[i].connectionInnerLinks.right && !SCG2.modeller.modules[moduleId].connectionInnerLinks.left){
-					var ph = new SCG2.modeller.PlaceHolder({position: SCG2.modeller.go.modules[i].position.clone().add(new Vector2(SCG2.modeller.go.modules[i].size.x/2 + SCG2.modeller.modules[moduleId].size.x/2,0),true)
-						, size: SCG2.modeller.modules[moduleId].size
-						, moduleId: moduleId
-						, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: 'right'}] 
-					});
-					SCG2.modeller.checkPlaceHolderExistenceByPosition(ph);
-				}
-			}
-		};
-	}
-
-		
-	// switch(ct.attr('id'))
-	// {
-	// 	default:
-	// 		break;
-	// }
-}
-
-SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder){
-	for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {
-		if(placeHolder.position.x >= SCG2.modeller.go.modules[i].position.x - SCG2.modeller.go.modules[i].size.x/2 && placeHolder.position.x <= SCG2.modeller.go.modules[i].position.x + SCG2.modeller.go.modules[i].size.x/2 &&
-		placeHolder.position.y >= SCG2.modeller.go.modules[i].position.y - SCG2.modeller.go.modules[i].size.y/2 && placeHolder.position.y <= SCG2.modeller.go.modules[i].position.y + SCG2.modeller.go.modules[i].size.y/2)
-		{
-			return;
-		}
-	};
-
-	for (var i = SCG2.nonplayableGo.length - 1; i >= 0; i--) {
-		if(SCG2.nonplayableGo[i].position.equal(placeHolder.position) && placeHolder.siblings.length > 0){
-			SCG2.nonplayableGo[i].siblings.push(placeHolder.siblings[0]);
-			return;
-		}
-	};
-
-	SCG2.nonplayableGo.push(placeHolder);
+	SCG2.modeller.placeHolderCreation(moduleId,SCG2.nonplayableGo);
+	
 }
 
 SCG2.modeller.fillModulesPanel = function(){
@@ -318,20 +235,45 @@ SCG2.modeller.fillComponentsPanel = function(){
 	SCG2.modeller.panel.attr('mode','components');
 	if(SCG2.modeller.selectedModule.module.component == undefined){
 		if(SCG2.modeller.is2x2Possible(SCG2.modeller.selectedModule.module)){
-			SCG2.modeller.panel.append($('<div/>',{id:'command_Room_2x',componentSize:'2x' ,class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room 2x'}));		
+			SCG2.modeller.panel.append($('<div/>',{text: '2x', class: 'componentDivider'}));
+
+			for (var componentName in SCG2.modeller.components) {
+		        if (SCG2.modeller.components.hasOwnProperty(componentName) && SCG2.modeller.components[componentName]._2x) {
+		        	SCG2.modeller.panel.append($('<div/>',
+		        		{
+		        			id:componentName + '_2x',
+		        			componentSize:'2x',
+		        			class:'componentBlock',
+		        			css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},
+		        			title: SCG2.modeller.components[componentName].title
+		        		}));		
+		        }
+		    }	
 		}
 
 		//only sqare module components
+		SCG2.modeller.panel.append($('<div/>',{text: '1x', class: 'componentDivider'}));
+
 		if(SCG2.modeller.isSquare(SCG2.modeller.selectedModule.module)){
-			SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url(content/images/commandRoom.png)'},title: 'Command room'}));			
-			SCG2.modeller.panel.append($('<div/>',{id:'small_Thruster',class:'componentBlock',css: {'background-image':'url(content/images/smallThruster.png)'},title: 'Small thruster'}));				
+
+			for (var componentName in SCG2.modeller.components) {
+				if (componentName!=='init' && SCG2.modeller.components.hasOwnProperty(componentName) && !SCG2.modeller.components[componentName]._2x && SCG2.modeller.components[componentName].accessibilityCheck(SCG2.modeller.selectedModule.module)) {
+					SCG2.modeller.panel.append($('<div/>',{id:componentName,class:'componentBlock',css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},title: SCG2.modeller.components[componentName].title}));					
+				}
+			}
+
+			// SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},title: 'Command room'}));
+			// //below should be free
+			// if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below == false){
+			// 	SCG2.modeller.panel.append($('<div/>',{id:'small_Thruster',class:'componentBlock',css: {'background-image':'url(content/images/smallThruster.png)'},title: 'Small thruster'}));
+			// }
 		}
 		
 	}
 	else {
 		SCG2.modeller.panel.append($('<div/>',{id:'remove_component',class:'componentBlock',css: {'background-image':'url(content/images/removeComponent30.png)'},title: 'Remove component'}));	
 	}
-	
+	SCG2.modeller.panel.append($('<div/>',{text: '-', class: 'componentDivider'}));
 	SCG2.modeller.panel.append($('<div/>',{id:'remove_module',class:'componentBlock',css: {'background-image':'url(content/images/remove20.png)'},title: 'Remove module'}));	
 }
 
@@ -352,7 +294,7 @@ SCG2.modeller.showNotifications = function(){
 			noModules: {message:'No modules added', state: 'fatal', show: (SCG2.modeller.go.modules.length == 0)},
 			commandRoom:{message:'No command room', state: 'fatal', show: !SCG2.modeller.go.stats.commandRoom || SCG2.modeller.go.stats.commandRoom == 0},
 			disconnected:{message:'Modules disconnected', state: 'fatal',show: SCG2.modeller.go.stats.disconnectedModules},
-			thruster:{message:'Ship is static', state: 'warning',show: false},
+			thruster:{message:'Ship is static', state: 'warning',show: !SCG2.modeller.go.stats.speed},
 		};
 
 	var rowShiftY = 40;
@@ -370,7 +312,7 @@ SCG2.modeller.showNotifications = function(){
 }
 
 SCG2.modeller.findDisconnectedModules = function(){
-	if(SCG2.modeller.go.modules.length == 1){ return; }
+	if(SCG2.modeller.go.modules.length <= 1){ return; }
 	var disconnectedModules = [];
 	this.checkedModules = [];
 

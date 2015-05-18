@@ -47,6 +47,7 @@ SCG2.src = {
 	module_internal_triangle_topLeft: 'content/images/module_internal_triangle_topLeft.png',
 	module_internal_triangle_topRight: 'content/images/module_internal_triangle_topRight.png',
 	component_commandRoom: 'content/images/commandRoom.png',
+	component_commandRoom_2x: 'content/images/commandRoom_2x.png',
 	component_smallThruster: 'content/images/smallThruster.png',
 };
 SCG2.images = {
@@ -109,7 +110,7 @@ $(document).ready(function(){
 });
 
 SCG2.initScene1 = function(testGo){
-	$('.showScene, #modulesSelectPanel').remove();
+	$('.showScene, #modulesSelectPanel, #getPredefined').remove();
 	SCG2.gameLogics.isPaused = false;
 	SCG2.modeller.options.isActive = false;
 	var fighter = testGo || new SCG2.GO.Fighter({position:new Vector2(SCG2.battlefield.width/2,SCG2.battlefield.height/2)});

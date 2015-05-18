@@ -268,7 +268,12 @@ function addModellerBtn(container,testGo){
 function addScene1Btn(container, testGo){
   var showModellerDialogBtn = $('<input />', { class: 'showScene', id: 'showScene' + (testGo? 'testGo':''), type:'button', value: 'scene' + (testGo? ' test fly': ''), on: {'click':function(){ 
     if(!testGo) { SCG2.initScene1(); }
-    else if(testGo.checkStats()){SCG2.initScene1(testGo);}    
+    else if(SCG2.modeller.go.checkStats()){SCG2.initScene1(SCG2.modeller.go);}    
   }}});
   container.append(showModellerDialogBtn);
+}
+
+function isArray(obj)
+{
+  return Object.prototype.toString.call(obj) === '[object Array]';
 }

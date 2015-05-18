@@ -1,5 +1,34 @@
 SCG2.modeller.components = {
 	init: function(){
+		this.command_Room_middle = {
+			size: new Vector2(30,30),
+			addStats: function(stats){
+				if(stats.commandRoom === undefined){
+					stats.commandRoom = 0.5;
+				}
+				else{
+					if(stats.commandRoom < 0) {stats.commandRoom = 0;}
+					stats.commandRoom+=0.5;	
+				}
+			},
+			removeStats:function(stats){
+				if(stats.commandRoom === undefined){
+					stats.commandRoom = 0;
+				}
+				else{
+					stats.commandRoom-=0.5;	
+					if(stats.commandRoom < 0) {stats.commandRoom = 0;}
+				}
+			},
+			_2x: true,
+			img: SCG2.images.component_commandRoom_2x,
+			title: 'Command room 2x',
+			accessibilityCheck: function(module)
+			{
+				return true;
+			}
+		},
+
 		this.command_Room = {
 			size: new Vector2(30,30),
 			addStats: function(stats){
@@ -21,6 +50,11 @@ SCG2.modeller.components = {
 				}
 			},
 			img: SCG2.images.component_commandRoom,
+			title: 'Command room',
+			accessibilityCheck: function(module)
+			{
+				return true;
+			}
 		}
 		this.small_Thruster = {
 			size: new Vector2(30,30),
@@ -60,6 +94,11 @@ SCG2.modeller.components = {
 				}
 			},
 			img: SCG2.images.component_smallThruster,
+			title: 'Command room 2x',
+			accessibilityCheck: function(module)
+			{
+				return module.connectionInnerLinks.below == false;
+			}
 		}
 		
 	}

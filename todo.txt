@@ -13,9 +13,15 @@
 - pause lifetime timeout fixes
 - pause exception fix
 - hud zoom fix
-- ship constructor
++ ship modeller
 - add ai base
 - mini map
-- module internal objects
++ module internal objects
 - selection rectangle (multiple go select)
 + segmentToSegment intersection fix
+
+//modeller todo
+- restriction lines
+- save go
+- load go
+- external components
