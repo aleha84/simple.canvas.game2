@@ -178,22 +178,15 @@ SCG2.modeller.componentBlockSelect = function(event){
 		SCG2.modeller.selectedModuleComponentRemove();
 	}
 	else if(componentId != ''){
-		var id = ct.attr('id');
-		var size = ct.attr('componentSize');
-		var component = undefined;
-		if(size!=undefined){
-			id = id.replace('_'+size,'');
-			component = new SCG2.Component.Component(SCG2.modeller.components[id]);
-			if(size == '2x'){
-				component.componentSize = size;
-				SCG2.modeller.selectedModule.module.addComponent(component,0);
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.addComponent(component,1);
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.addComponent(component,2);
-				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.right.addComponent(component,3);
-			}
+		var component = new SCG2.Component.Component(SCG2.modeller.components[componentId]);
+		if(component._2x){
+			SCG2.modeller.selectedModule.module.addComponent(component,0);
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.right.addComponent(component,1);
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.below.addComponent(component,2);
+			SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.right.addComponent(component,3);
 		}
 		else{
-			SCG2.modeller.selectedModule.module.addComponent(new SCG2.Component.Component(SCG2.modeller.components[id]));
+			SCG2.modeller.selectedModule.module.addComponent(component);
 		}
 		
 	}
@@ -241,7 +234,7 @@ SCG2.modeller.fillComponentsPanel = function(){
 		        if (SCG2.modeller.components.hasOwnProperty(componentName) && SCG2.modeller.components[componentName]._2x) {
 		        	SCG2.modeller.panel.append($('<div/>',
 		        		{
-		        			id:componentName + '_2x',
+		        			id:componentName,
 		        			componentSize:'2x',
 		        			class:'componentBlock',
 		        			css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},
@@ -258,15 +251,15 @@ SCG2.modeller.fillComponentsPanel = function(){
 
 			for (var componentName in SCG2.modeller.components) {
 				if (componentName!=='init' && SCG2.modeller.components.hasOwnProperty(componentName) && !SCG2.modeller.components[componentName]._2x && SCG2.modeller.components[componentName].accessibilityCheck(SCG2.modeller.selectedModule.module)) {
-					SCG2.modeller.panel.append($('<div/>',{id:componentName,class:'componentBlock',css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},title: SCG2.modeller.components[componentName].title}));					
+					SCG2.modeller.panel.append($('<div/>',
+						{
+							id:componentName,
+							class:'componentBlock',
+							css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},
+							title: SCG2.modeller.components[componentName].title
+						}));					
 				}
 			}
-
-			// SCG2.modeller.panel.append($('<div/>',{id:'command_Room',class:'componentBlock',css: {'background-image':'url('+SCG2.modeller.components[componentName].img.src+')'},title: 'Command room'}));
-			// //below should be free
-			// if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below == false){
-			// 	SCG2.modeller.panel.append($('<div/>',{id:'small_Thruster',class:'componentBlock',css: {'background-image':'url(content/images/smallThruster.png)'},title: 'Small thruster'}));
-			// }
 		}
 		
 	}

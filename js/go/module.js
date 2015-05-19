@@ -30,6 +30,7 @@ SCG2.Module.Module = function(init){
 	this.hilightBox = new Box(new Vector2().substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
 	this.screenBox = undefined;
 	this.component = undefined;
+	this.img2xPart = undefined;
 }
 
 SCG2.Module.Module.prototype = {
@@ -45,12 +46,31 @@ SCG2.Module.Module.prototype = {
 
 		SCG2.context.drawImage(this.img,this.size.x/-2,this.size.y/-2,this.size.x,this.size.y);	
 		if(SCG2.modeller.options.isActive && this.component && this.component.img){
-			if(this.component.is2x)
+			if(this.component._2x)
 			{
-
+				var source; 
+				switch(this.img2xPart)
+				{
+					case 0:
+						source = new Vector2;
+						break;
+					case 1:
+						source = new Vector2(this.size.x,0);
+						break;
+					case 2:
+						source = new Vector2(0,this.size.y);
+						break;
+					case 3:
+						source = new Vector2(this.size.x,this.size.y);
+						break;
+					default:
+						break;
+				}
+				var sSize = this.size.clone();
+				SCG2.context.drawImage(this.component.img, source.x, source.y, sSize.x, sSize.y,this.component.size.x/-2,this.component.size.y/-2,this.component.size.x,this.component.size.y);
 			}
 			else{
-				SCG2.context.drawImage(this.component.img,this.component.size.x/-2,this.component.size.y/-2,this.component.size.x,this.component.size.y);		
+				SCG2.context.drawImage(this.component.img,this.component.size.x/-2,this.component.size.y/-2,this.component.size.x,this.component.size.y);
 			}
 			
 		}
@@ -96,10 +116,13 @@ SCG2.Module.Module.prototype = {
 
 	},
 
-	addComponent: function(component){
+	addComponent: function(component, img2xPart){
 		this.component = component;
 		this.component.parents.push(this);
 		this.component.addStats(this.parent.stats);
+		if(img2xPart!== undefined){
+			this.img2xPart = img2xPart;
+		}
 	},
 
 	removeComponent: function(){
