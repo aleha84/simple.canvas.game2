@@ -71,7 +71,7 @@ SCG2.modeller.options = {
 
 SCG2.modeller.go = [];//new SCG2.GO.GO({direction: new Vector2.up()});
 SCG2.modeller.currentPlaceHolder = undefined;
-SCG2.modeller.restrictionLines = [];
+SCG2.modeller.restrictionPoligons = [];
 SCG2.modeller.selectedModule = {
 	module: undefined,
 	unselect: function(){

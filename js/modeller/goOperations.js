@@ -46,6 +46,10 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 					SCG2.modeller.checkPlaceHolderExistenceByPosition(ph, phCollection);
 				}
 			}
+			// if(SCG2.modeller.go.modules[i].component && SCG2.modeller.go.modules[i].component.restrictionPoligon)
+			// {
+			// 	phCollection.push()
+			// }
 		};
 	}
 }

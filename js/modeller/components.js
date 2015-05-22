@@ -98,7 +98,13 @@ SCG2.modeller.components = {
 			accessibilityCheck: function(module)
 			{
 				return module.connectionInnerLinks.below == false;
-			}
+			},
+			restrictionPoligon: new Poligon({ vertices: [
+				new Vector2(-15,15),
+				new Vector2(15,15),
+				new Vector2(15,90),
+				new Vector2(-15,90),
+			], renderOptions : { fill: true}})
 		}
 		
 	}

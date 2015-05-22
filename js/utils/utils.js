@@ -277,3 +277,16 @@ function isArray(obj)
 {
   return Object.prototype.toString.call(obj) === '[object Array]';
 }
+
+function isBetween(x, begin, end)
+{
+  if(begin > end)
+  {
+    var swap = end;
+    end = begin;
+    begin = swap;
+  }
+
+  return x >= begin && x <= end;
+
+}
