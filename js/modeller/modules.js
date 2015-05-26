@@ -6,6 +6,7 @@ SCG2.modeller.modules = {
 			size: new Vector2(30,30),
 			cornerPoints: [new Vector2(-15,-15),new Vector2(15,-15),new Vector2(15,15),new Vector2(-15,15)],
 			connectionInnerLinks: { above: false, below: false, left: false, right: false },
+			connectionOuterLinks : { above: new Vector2(0,-15), below: new Vector2(0,15), left: new Vector2(-15,0), right: new Vector2(0,15) },
 			img: SCG2.images.module_internal_square,
 		}
 		this.module_internal_triangle_bottomLeft = {
@@ -31,6 +32,14 @@ SCG2.modeller.modules = {
 			cornerPoints: [new Vector2(-15,-15),new Vector2(15,15),new Vector2(-15,15)],
 			connectionInnerLinks: { above: true, below: false, left: false, right: true },
 			img: SCG2.images.module_internal_triangle_topRight,
+		}
+		this.module_external_gun_turret = {
+			size: new Vector2(15,15),
+			cornerPoints: [new Vector2(0,-7.5),new Vector2(3.75,-5.625),new Vector2(7.5,0),
+						   new Vector2(3.75,5.625), new Vector2(0,7.5), new Vector2(-3.75,5.625),
+						   new Vector2(-7.5,0), new Vector2(-3.75,-5.625)],
+		    connectionInnerLinks: { above: false, below: false, left: false, right: false },
+			img: SCG2.images.module_external_small_gun_turret,
 		}
 	}
 	

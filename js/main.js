@@ -49,6 +49,7 @@ SCG2.src = {
 	component_commandRoom: 'content/images/commandRoom.png',
 	component_commandRoom_2x: 'content/images/commandRoom_2x.png',
 	component_smallThruster: 'content/images/smallThruster.png',
+	module_external_small_gun_turret: 'content/images/small_gun_turret.png',
 };
 SCG2.images = {
 }

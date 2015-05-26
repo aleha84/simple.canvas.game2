@@ -31,6 +31,10 @@ function Poligon(init)
 		this.renderOptions.fill = false;
 	}
 
+	this.clone = function(){
+		return new Poligon({vertices: this.vertices.map(function(v){ return v.clone()})});
+	}
+
 	this.update = function(shift){
 		for (var i = this.vertices.length - 1; i >= 0; i--) {
 			this.vertices[i].add(shift);
@@ -58,6 +62,17 @@ function Poligon(init)
 
 	this.isPointInside = function(point){
 		var collisionCount = 0;
+
+		var maxX = point.x;
+		for(var i = 0; i < this.vertices.length; i++)
+		{
+			if(this.vertices[i].x > maxX)
+			{
+				maxX = this.vertices[i].x;
+			}
+		}
+		maxX +=1;
+
 		for(var i = 0; i < this.vertices.length; i++)
 		{
 			var begin = this.vertices[i].clone();
@@ -67,7 +82,7 @@ function Poligon(init)
 			if(point.y == end.y) { end.y -= 0.001; }
 
 			if(segmentsIntersectionVector2(
-				new Line({begin: point, end: new Vector2((begin.x > end.x ? begin.x : end.x), point.y)}), 
+				new Line({begin: point, end: new Vector2(maxX, point.y)}), 
 				new Line({begin: begin, end: end}))
 				)
 			{

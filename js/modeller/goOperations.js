@@ -4,15 +4,16 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 	if(!isArray(phCollection)){
 		throw 'SCG2.modeller.placeHolderCreation -> phCollection should be array!';
 	}
+	var isInternal = moduleId.indexOf('internal') != -1;
 
 
-	if(SCG2.modeller.go.modules.length == 0){
+	if(SCG2.modeller.go.modules.length == 0 && isInternal){
 		var ph = new SCG2.modeller.PlaceHolder({position: new Vector2, size: SCG2.modeller.modules[moduleId].size, moduleId: moduleId});
 		phCollection.push(ph);
 	}
 	else{
 		for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {
-			if(SCG2.modeller.go.modules[i].connectionInnerLinks) {
+			if(isInternal && SCG2.modeller.go.modules[i].connectionInnerLinks) {
 				if(!SCG2.modeller.go.modules[i].connectionInnerLinks.above && !SCG2.modeller.modules[moduleId].connectionInnerLinks.below){
 					var ph = new SCG2.modeller.PlaceHolder({position: SCG2.modeller.go.modules[i].position.clone().substract(new Vector2(0,SCG2.modeller.go.modules[i].size.y/2 + SCG2.modeller.modules[moduleId].size.y/2),true)
 						, size: SCG2.modeller.modules[moduleId].size
@@ -46,6 +47,38 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 					SCG2.modeller.checkPlaceHolderExistenceByPosition(ph, phCollection);
 				}
 			}
+			else if(!isInternal && SCG2.modeller.go.modules[i].connectionOuterLinks){
+				for (var outerLinkName in SCG2.modeller.go.modules[i].connectionOuterLinks) {
+					if (SCG2.modeller.go.modules[i].connectionOuterLinks.hasOwnProperty(outerLinkName) && SCG2.modeller.go.modules[i].connectionOuterLinks[outerLinkName] instanceof Vector2) {
+						var siblingDirection = "";
+						switch(outerLinkName)
+						{
+							case 'above':
+								siblingDirection = 'below';
+								break;
+							case 'below':
+								siblingDirection = 'above';
+								break;
+							case 'left':
+								siblingDirection = 'right';
+								break;
+							case 'right':
+								siblingDirection = 'left';
+								break;
+							default: 
+								break;
+						}
+
+						var ph = new SCG2.modeller.PlaceHolder( {position: SCG2.modeller.go.modules[i].position.clone().add(SCG2.modeller.go.modules[i].connectionOuterLinks[outerLinkName],true)
+							, size: SCG2.modeller.modules[moduleId].size
+							, moduleId: moduleId
+							, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: siblingDirection}] 
+						});
+
+						phCollection.push(ph);
+					}
+				}
+			}
 			// if(SCG2.modeller.go.modules[i].component && SCG2.modeller.go.modules[i].component.restrictionPoligon)
 			// {
 			// 	phCollection.push()
@@ -61,6 +94,17 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phColl
 		{
 			return;
 		}
+
+		if(SCG2.modeller.go.modules[i].component && SCG2.modeller.go.modules[i].component.restrictionPoligon)
+		{
+			var rp = SCG2.modeller.go.modules[i].component.restrictionPoligon.clone();
+			rp.update(SCG2.modeller.go.modules[i].position);
+			if(rp.isPointInside(placeHolder.position))
+			{
+				return;
+			}
+		}
+			
 	};
 
 	for (var i = phCollection.length - 1; i >= 0; i--) {

@@ -213,11 +213,35 @@ SCG2.modeller.fillModulesPanel = function(){
 	}
 	SCG2.modeller.panel.empty();
 	SCG2.modeller.panel.attr('mode','modules');
-	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_square',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_square.png)'}}));
-	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_bottomLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomLeft.png)'}}));
-	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_bottomRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomRight.png)'}}));
-	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_topLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topLeft.png)'}}));
-	SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_topRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topRight.png)'}}));
+
+	SCG2.modeller.panel.append($('<div/>',{text: 'Inner', class: 'componentDivider'}));
+	for (var moduleName in SCG2.modeller.modules) {
+		if (SCG2.modeller.modules.hasOwnProperty(moduleName) && moduleName.indexOf('internal') != -1) {
+			SCG2.modeller.panel.append($('<div/>',
+				{
+					id:moduleName,
+					class:'moduleBlock',
+					css: {'background-image':'url('+SCG2.modeller.modules[moduleName].img.src+')'}
+			}));
+		}
+	}
+
+	SCG2.modeller.panel.append($('<div/>',{text: 'Outer', class: 'componentDivider'}));
+	for (var moduleName in SCG2.modeller.modules) {
+		if (SCG2.modeller.modules.hasOwnProperty(moduleName) && moduleName.indexOf('external') != -1) {
+			SCG2.modeller.panel.append($('<div/>',
+				{
+					id:moduleName,
+					class:'moduleBlock',
+					css: {'background-image':'url('+SCG2.modeller.modules[moduleName].img.src+')'}
+			}));
+		}
+	}
+	// SCG2.modeller.panel.append($('<div/>',{id:'module_internal_square',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_square.png)'}}));
+	// SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_bottomLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomLeft.png)'}}));
+	// SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_bottomRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_bottomRight.png)'}}));
+	// SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_topLeft',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topLeft.png)'}}));
+	// SCG2.modeller.panel.append($('<div/>',{id:'module_internal_triangle_topRight',class:'moduleBlock',css: {'background-image':'url(content/images/module_internal_triangle_topRight.png)'}}));
 }
 
 SCG2.modeller.fillComponentsPanel = function(){

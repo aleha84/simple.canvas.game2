@@ -12,6 +12,7 @@ SCG2.Module.Module = function(init){
 	this.cornerPoints = [];
 	this.boundingSphere = undefined;
 	this.connectionInnerLinks = undefined;
+	this.connectionOuterLinks = undefined;
 	if(init!=undefined)
 	{
 		$.extend(true,this,init);

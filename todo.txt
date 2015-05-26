@@ -21,7 +21,8 @@
 + segmentToSegment intersection fix
 
 //modeller todo
-- restriction lines
++ restriction poligon
 - save go
 - load go
 - external components
+- selected module info

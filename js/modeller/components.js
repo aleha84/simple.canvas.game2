@@ -106,7 +106,7 @@ SCG2.modeller.components = {
 				new Vector2(-15,90),
 			], renderOptions : { fill: true}})
 		}
-		
+
 	}
 	
 }
