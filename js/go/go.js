@@ -85,10 +85,19 @@ SCG2.GO.GO.prototype = {
 		new Box(this.position,this.size);
 	},
 
-	addModule: function (module) {
+	addModule: function (module, isInternal) {
+		if(isInternal === undefined){
+			isInternal = true;
+		}
 		module.parent = this;
 		module.id = this.id + '_module_' + (++this.moduleCounter);
-		this.modules.push(module);
+		if(isInternal){
+			this.modules.push(module);	
+		}
+		else{
+			this.modules.unshift(module);
+		}
+		
 
 		this.updateBoundingBox();
 	},

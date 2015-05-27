@@ -49,33 +49,25 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 			}
 			else if(!isInternal && SCG2.modeller.go.modules[i].connectionOuterLinks){
 				for (var outerLinkName in SCG2.modeller.go.modules[i].connectionOuterLinks) {
-					if (SCG2.modeller.go.modules[i].connectionOuterLinks.hasOwnProperty(outerLinkName) && SCG2.modeller.go.modules[i].connectionOuterLinks[outerLinkName] instanceof Vector2) {
-						var siblingDirection = "";
-						switch(outerLinkName)
-						{
-							case 'above':
-								siblingDirection = 'below';
-								break;
-							case 'below':
-								siblingDirection = 'above';
-								break;
-							case 'left':
-								siblingDirection = 'right';
-								break;
-							case 'right':
-								siblingDirection = 'left';
-								break;
-							default: 
-								break;
-						}
+					if (SCG2.modeller.go.modules[i].connectionOuterLinks.hasOwnProperty(outerLinkName) && !SCG2.modeller.go.modules[i].connectionOuterLinks[outerLinkName] ) {
 
-						var ph = new SCG2.modeller.PlaceHolder( {position: SCG2.modeller.go.modules[i].position.clone().add(SCG2.modeller.go.modules[i].connectionOuterLinks[outerLinkName],true)
+						var ph = new SCG2.modeller.PlaceHolder( {position: SCG2.modeller.go.modules[i].position.clone().add(SCG2.modeller.go.modules[i].connectionOuterLinksBase[outerLinkName],true)
 							, size: SCG2.modeller.modules[moduleId].size
 							, moduleId: moduleId
-							, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: siblingDirection}] 
+							, siblings: [{sibling: SCG2.modeller.go.modules[i], siblingDirection: outerLinkName}] 
 						});
 
-						phCollection.push(ph);
+						var restricted = false;
+						for (var j = SCG2.modeller.go.modules.length - 1; j >= 0; j--) {
+							if(SCG2.modeller.restrictionCheck(ph, SCG2.modeller.go.modules[j] )){
+								restricted = true;
+								break;
+							}
+						}
+						if(!restricted){
+							phCollection.push(ph);	
+						}
+						
 					}
 				}
 			}
@@ -87,6 +79,17 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 	}
 }
 
+SCG2.modeller.restrictionCheck = function(placeHolder, module){
+	if(module.component && module.component.restrictionPoligon)
+	{
+		var rp = module.component.restrictionPoligon.clone();
+		rp.update(module.position);
+		return rp.isPointInside(placeHolder.position);
+	}
+
+	return false;
+}
+
 SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phCollection){
 	for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {
 		if(placeHolder.position.x >= SCG2.modeller.go.modules[i].position.x - SCG2.modeller.go.modules[i].size.x/2 && placeHolder.position.x <= SCG2.modeller.go.modules[i].position.x + SCG2.modeller.go.modules[i].size.x/2 &&
@@ -95,16 +98,7 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phColl
 			return;
 		}
 
-		if(SCG2.modeller.go.modules[i].component && SCG2.modeller.go.modules[i].component.restrictionPoligon)
-		{
-			var rp = SCG2.modeller.go.modules[i].component.restrictionPoligon.clone();
-			rp.update(SCG2.modeller.go.modules[i].position);
-			if(rp.isPointInside(placeHolder.position))
-			{
-				return;
-			}
-		}
-			
+		if(SCG2.modeller.restrictionCheck(placeHolder, SCG2.modeller.go.modules[i] )){ return; }
 	};
 
 	for (var i = phCollection.length - 1; i >= 0; i--) {
@@ -118,6 +112,7 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phColl
 }
 
 SCG2.modeller.addModule = function(currentPlaceHolder){
+	var isInternal = currentPlaceHolder.moduleId.indexOf('internal') != -1;
 	var module = new SCG2.Module.Module($.extend(true,{position:currentPlaceHolder.position},SCG2.modeller.modules[currentPlaceHolder.moduleId]));
 	if(currentPlaceHolder.siblings !== undefined){
 		for (var i = currentPlaceHolder.siblings.length - 1; i >= 0; i--) {
@@ -125,19 +120,52 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 			switch(currentPlaceHolder.siblings[i].siblingDirection){
 				case 'above':
 					currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.above = module;
-					module.connectionInnerLinks.below = currentPlaceHolder.siblings[i].sibling;
+					if(isInternal){
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.above = true;
+						module.connectionInnerLinks.below = currentPlaceHolder.siblings[i].sibling;	
+						module.connectionOuterLinks.below = true;
+					}
+					else{
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.above = module;
+						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;
+					}
+					
 					break;
 				case 'below':
 					currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.below = module;
-					module.connectionInnerLinks.above = currentPlaceHolder.siblings[i].sibling;
+					if(isInternal){
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.below = true;
+						module.connectionInnerLinks.above = currentPlaceHolder.siblings[i].sibling;
+						module.connectionOuterLinks.above = true;
+					}
+					else{
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.below = module;
+						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;
+					}
 					break;
 				case 'left':
 					currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.left = module;
-					module.connectionInnerLinks.right = currentPlaceHolder.siblings[i].sibling;
+					if(isInternal){
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.left = true;
+						module.connectionInnerLinks.right = currentPlaceHolder.siblings[i].sibling;
+						module.connectionOuterLinks.right = true;
+					}
+					else{
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.left = module;
+						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;	
+					}
 					break;
 				case 'right':
 					currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.right = module;
-					module.connectionInnerLinks.left = currentPlaceHolder.siblings[i].sibling;
+					if(isInternal){
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.right = true;
+						module.connectionInnerLinks.left = currentPlaceHolder.siblings[i].sibling;
+						module.connectionOuterLinks.left = true;
+					}
+					else{
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.right = module;
+						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;		
+					}
 					break;
 				default:
 					break;
@@ -145,7 +173,8 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 		};
 		
 	}
-	SCG2.modeller.go.addModule(module);
+
+	SCG2.modeller.go.addModule(module, isInternal);
 	SCG2.modeller.findDisconnectedModules();
 }
 
