@@ -80,9 +80,9 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 }
 
 SCG2.modeller.restrictionCheck = function(placeHolder, module){
-	if(module.component && module.component.restrictionPoligon)
+	if((module.component && module.component.restrictionPoligon) || module.restrictionPoligon)
 	{
-		var rp = module.component.restrictionPoligon.clone();
+		var rp = (module.component.restrictionPoligon || module.restrictionPoligon).clone();
 		rp.update(module.position);
 		return rp.isPointInside(placeHolder.position);
 	}
@@ -114,10 +114,12 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phColl
 SCG2.modeller.addModule = function(currentPlaceHolder){
 	var isInternal = currentPlaceHolder.moduleId.indexOf('internal') != -1;
 	var module = new SCG2.Module.Module($.extend(true,{position:currentPlaceHolder.position},SCG2.modeller.modules[currentPlaceHolder.moduleId]));
+	var clamps = {min : 0, max: 0, default : 0 } //degreeToRadians
+	var defaultDirection = undefined;
 	if(currentPlaceHolder.siblings !== undefined){
 		for (var i = currentPlaceHolder.siblings.length - 1; i >= 0; i--) {
 			
-			switch(currentPlaceHolder.siblings[i].siblingDirection){
+			switch(currentPlaceHolder.siblings[i].siblingDirection){ 
 				case 'above':
 					currentPlaceHolder.siblings[i].sibling.connectionInnerLinks.above = module;
 					if(isInternal){
@@ -127,7 +129,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					}
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.above = module;
-						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;
+						module.connectionOuterLink = {below: currentPlaceHolder.siblings[i].sibling};
+						clamps = {min : degreeToRadians(-45), max : degreeToRadians(45), default : degreeToRadians(0) };
+						defaultDirection = Vector2.up();
 					}
 					
 					break;
@@ -140,7 +144,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					}
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.below = module;
-						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;
+						module.connectionOuterLink = {above: currentPlaceHolder.siblings[i].sibling};
+						clamps = {min : degreeToRadians(135), max : degreeToRadians(225), default : degreeToRadians(180) };
+						defaultDirection = Vector2.down();
 					}
 					break;
 				case 'left':
@@ -152,7 +158,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					}
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.left = module;
-						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;	
+						module.connectionOuterLink = {right: currentPlaceHolder.siblings[i].sibling};	
+						clamps = {min : degreeToRadians(-135), max : degreeToRadians(-45), default : degreeToRadians(-90) };
+						defaultDirection = Vector2.left();
 					}
 					break;
 				case 'right':
@@ -164,14 +172,43 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					}
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.right = module;
-						module.connectionOuterLink = currentPlaceHolder.siblings[i].sibling;		
+						module.connectionOuterLink = {left: currentPlaceHolder.siblings[i].sibling};	
+						clamps = {min : degreeToRadians(45), max : degreeToRadians(135), default : degreeToRadians(90) };	
+						defaultDirection = Vector2.right();
 					}
 					break;
+				case 'center':
+					if(!isInternal){
+						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.center = module;
+						module.connectionOuterLink = {center: currentPlaceHolder.siblings[i].sibling};
+						var sc = currentPlaceHolder.siblings[i].sibling.connectionOuterLinksBase;
+						var nVector = new Vector2;
+						if(sc.above.equal(nVector) && sc.left.equal(nVector)) {
+							clamps = {min : degreeToRadians(-90), max : degreeToRadians(0), default : degreeToRadians(-45) };	
+						} else if(sc.above.equal(nVector) && sc.right.equal(nVector)) {
+							clamps = {min : degreeToRadians(0), max : degreeToRadians(90), default : degreeToRadians(45) };	
+						} else if(sc.below.equal(nVector) && sc.left.equal(nVector)) {
+							clamps = {min : degreeToRadians(-180), max : degreeToRadians(-90), default : degreeToRadians(-135) };	
+						} else if(sc.below.equal(nVector) && sc.right.equal(nVector)) {
+							clamps = {min : degreeToRadians(90), max : degreeToRadians(180), default : degreeToRadians(135) };	
+						}
+					}
 				default:
 					break;
 			}
 		};
 		
+	}
+
+	if(!isInternal){
+		module.clamps = clamps;
+		module.angle = clamps.default;
+		var rp = new Poligon({ vertices: [
+				new Vector2(-15,15),
+				new Vector2(15,15),
+				new Vector2(15,900),
+				new Vector2(-15,900),
+			], renderOptions : { fill: true}})
 	}
 
 	SCG2.modeller.go.addModule(module, isInternal);

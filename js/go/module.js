@@ -74,10 +74,11 @@ SCG2.Module.Module.prototype = {
 				SCG2.context.drawImage(this.component.img,this.component.size.x/-2,this.component.size.y/-2,this.component.size.x,this.component.size.y);
 			}
 
-			if(this.component.restrictionPoligon)
-			{
+			if(this.component.restrictionPoligon){
 				this.component.restrictionPoligon.render();
-			}
+			}else if (this.restrictionPoligon) {
+				this.restrictionPoligon.render();
+			};
 			
 		}
 		this.innerRender();

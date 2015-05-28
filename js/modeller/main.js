@@ -158,30 +158,56 @@ SCG2.modeller.componentBlockSelect = function(event){
 	var ct = $(event.currentTarget);
 	var componentId = ct.attr('id');
 	if(componentId == 'remove_module'){
-		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.left instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks) {
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks.right = false;
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionOuterLinks.right = false;
-		}
-		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.right instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks) {
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks.left = false;
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionOuterLinks.left = false;
-		}
-		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.above instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks) {
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks.below = false;
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionOuterLinks.below = false;
-		}
-		if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks) {
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.above = false;
-			SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionOuterLinks.above = false;
-		}
+		if(SCG2.modeller.selectedModule.module.connectionInnerLinks){
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.left instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionInnerLinks.right = false;
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.left.connectionOuterLinks.right = false;
+			}
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.right instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionInnerLinks.left = false;
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.right.connectionOuterLinks.left = false;
+			}
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.above instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionInnerLinks.below = false;
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.above.connectionOuterLinks.below = false;
+			}
+			if(SCG2.modeller.selectedModule.module.connectionInnerLinks.below instanceof SCG2.Module.Module && SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks) {
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionInnerLinks.above = false;
+				SCG2.modeller.selectedModule.module.connectionInnerLinks.below.connectionOuterLinks.above = false;
+			}
 
-		//removes external modules binded to selected module
-		for (var outerLinkName in SCG2.modeller.selectedModule.module.connectionOuterLinks) {
-			if (SCG2.modeller.selectedModule.module.connectionOuterLinks.hasOwnProperty(outerLinkName) && SCG2.modeller.selectedModule.module.connectionOuterLinks[outerLinkName] ) {
-				var externalModule = SCG2.modeller.selectedModule.module.connectionOuterLinks[outerLinkName];
-				SCG2.modeller.go.removeModule(externalModule);
+			//removes external modules binded to selected module
+			for (var outerLinkName in SCG2.modeller.selectedModule.module.connectionOuterLinks) {
+				if (SCG2.modeller.selectedModule.module.connectionOuterLinks.hasOwnProperty(outerLinkName) && SCG2.modeller.selectedModule.module.connectionOuterLinks[outerLinkName] ) {
+					var externalModule = SCG2.modeller.selectedModule.module.connectionOuterLinks[outerLinkName];
+					SCG2.modeller.go.removeModule(externalModule);
+				}
 			}
 		}
+		
+
+		//removing external module
+		if(SCG2.modeller.selectedModule.module.connectionOuterLink!=undefined)
+		{
+			var col = SCG2.modeller.selectedModule.module.connectionOuterLink;
+			if(col.below){
+				col.below.connectionInnerLinks.above = false;
+				col.below.connectionOuterLinks.above = false;
+			}else if(col.above){
+				col.above.connectionInnerLinks.below = false;
+				col.above.connectionOuterLinks.below = false;
+			}else if(col.left){
+				col.left.connectionInnerLinks.right = false;
+				col.left.connectionOuterLinks.right = false;
+			}else if(col.right){
+				col.right.connectionInnerLinks.left = false;
+				col.right.connectionOuterLinks.left = false;
+			}else if(col.center){
+				col.center.connectionOuterLinks.center = false;
+			}
+
+		}
+
 
 		SCG2.modeller.selectedModuleComponentRemove();
 		SCG2.modeller.go.removeModule(SCG2.modeller.selectedModule.module);

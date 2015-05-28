@@ -102,8 +102,8 @@ SCG2.modeller.components = {
 			restrictionPoligon: new Poligon({ vertices: [
 				new Vector2(-15,15),
 				new Vector2(15,15),
-				new Vector2(15,90),
-				new Vector2(-15,90),
+				new Vector2(15,900),
+				new Vector2(-15,900),
 			], renderOptions : { fill: true}})
 		}
 
