@@ -82,9 +82,20 @@ SCG2.modeller.placeHolderCreation = function(moduleId, phCollection){
 SCG2.modeller.restrictionCheck = function(placeHolder, module){
 	if((module.component && module.component.restrictionPoligon) || module.restrictionPoligon)
 	{
-		var rp = (module.component.restrictionPoligon || module.restrictionPoligon).clone();
-		rp.update(module.position);
-		return rp.isPointInside(placeHolder.position);
+		var rp = undefined;
+		if(module.component && module.component.restrictionPoligon){
+			rp = module.component.restrictionPoligon.clone();
+		}
+		else if(module.restrictionPoligon)
+		{
+			rp = module.restrictionPoligon.clone();
+		}
+		rp.update(module.position, module.angle);
+		return rp.isPointInside(placeHolder.position)
+			|| rp.isPointInside(placeHolder.absoluteBox.topLeft) 
+			|| rp.isPointInside(placeHolder.absoluteBox.topRight) 
+			|| rp.isPointInside(placeHolder.absoluteBox.bottomLeft)
+			|| rp.isPointInside(placeHolder.absoluteBox.bottomRight);
 	}
 
 	return false;
@@ -98,7 +109,9 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phColl
 			return;
 		}
 
-		if(SCG2.modeller.restrictionCheck(placeHolder, SCG2.modeller.go.modules[i] )){ return; }
+		if(SCG2.modeller.restrictionCheck(placeHolder, SCG2.modeller.go.modules[i] )){ 
+			return; 
+		}
 	};
 
 	for (var i = phCollection.length - 1; i >= 0; i--) {
@@ -185,12 +198,16 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 						var nVector = new Vector2;
 						if(sc.above.equal(nVector) && sc.left.equal(nVector)) {
 							clamps = {min : degreeToRadians(-90), max : degreeToRadians(0), default : degreeToRadians(-45) };	
+							defaultDirection = Vector2.up().rotate(-45,false,true);
 						} else if(sc.above.equal(nVector) && sc.right.equal(nVector)) {
 							clamps = {min : degreeToRadians(0), max : degreeToRadians(90), default : degreeToRadians(45) };	
+							defaultDirection = Vector2.up().rotate(45,false,true);
 						} else if(sc.below.equal(nVector) && sc.left.equal(nVector)) {
 							clamps = {min : degreeToRadians(-180), max : degreeToRadians(-90), default : degreeToRadians(-135) };	
+							defaultDirection = Vector2.down().rotate(45,false,true);
 						} else if(sc.below.equal(nVector) && sc.right.equal(nVector)) {
 							clamps = {min : degreeToRadians(90), max : degreeToRadians(180), default : degreeToRadians(135) };	
+							defaultDirection = Vector2.down().rotate(-45,false,true);
 						}
 					}
 				default:
@@ -203,14 +220,16 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 	if(!isInternal){
 		module.clamps = clamps;
 		module.angle = clamps.default;
+		var center = new Vector2;
+		defaultDirection = Vector2.up();
+		//center.add(defaultDirection.mul(15));
 		var rp = new Poligon({ vertices: [
-				new Vector2(-15,15),
-				new Vector2(15,15),
-				new Vector2(15,900),
-				new Vector2(-15,900),
+				center,
+				defaultDirection.rotate(-45,false,false).mul(100).add(center,true),
+				defaultDirection.rotate(45,false,false).mul(100).add(center,true),
 			], renderOptions : { fill: true}})
 	}
-
+	module.restrictionPoligon = rp;
 	SCG2.modeller.go.addModule(module, isInternal);
 	SCG2.modeller.findDisconnectedModules();
 }

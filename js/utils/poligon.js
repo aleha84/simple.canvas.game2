@@ -35,8 +35,9 @@ function Poligon(init)
 		return new Poligon({vertices: this.vertices.map(function(v){ return v.clone()})});
 	}
 
-	this.update = function(shift){
+	this.update = function(shift, angle){
 		for (var i = this.vertices.length - 1; i >= 0; i--) {
+			this.vertices[i].rotate(angle,true,true);
 			this.vertices[i].add(shift);
 		};
 	}
@@ -78,8 +79,8 @@ function Poligon(init)
 			var begin = this.vertices[i].clone();
 			var end = this.vertices[(i == (this.vertices.length - 1) ? 0: i + 1)].clone();
 
-			if(point.y == begin.y) { begin.y -= 0.001; }
-			if(point.y == end.y) { end.y -= 0.001; }
+			if(point.y == begin.y) { begin.y -= 0.01; }
+			if(point.y == end.y) { end.y -= 0.01; }
 
 			if(segmentsIntersectionVector2(
 				new Line({begin: point, end: new Vector2(maxX, point.y)}), 

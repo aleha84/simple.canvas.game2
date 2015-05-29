@@ -7,10 +7,12 @@ SCG2.modeller.PlaceHolder = function (init) {
 	this.displayPosition = this.position.add(SCG2.battlefield.current.topLeft.mul(-1),true);
 	this.displayBox = new Box(this.displayPosition.substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
 	this.box = new Box(new Vector2().substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
+	this.absoluteBox = new Box(this.position.substract(new Vector2(this.size.x/2,this.size.y/2),true), this.size);
 	this.mouseOver = false;
 	this.update = function(now){
 		this.displayPosition = this.position.substract(SCG2.battlefield.current.topLeft,true);
 		this.displayBox = new Box(this.displayPosition.substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
+		this.absoluteBox = new Box(this.position.substract(new Vector2(this.size.x/2,this.size.y/2),true),this.size);
 		if(SCG2.gameControls.mousestate.position){
 			this.mouseOver = this.displayBox.isPointInside(SCG2.gameControls.mousestate.position);
 			if(this.mouseOver) {SCG2.modeller.currentPlaceHolder = this;}

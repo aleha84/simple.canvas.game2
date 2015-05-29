@@ -76,11 +76,14 @@ SCG2.Module.Module.prototype = {
 
 			if(this.component.restrictionPoligon){
 				this.component.restrictionPoligon.render();
-			}else if (this.restrictionPoligon) {
-				this.restrictionPoligon.render();
-			};
+			}
 			
 		}
+
+		if (this.restrictionPoligon) {
+			this.restrictionPoligon.render();
+		}	
+
 		this.innerRender();
 
 		if(SCG2.gameLogics.drawBoundings)

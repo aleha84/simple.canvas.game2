@@ -3,6 +3,10 @@ function Box(topLeft,size){
 	this.size = size;
 	this.center = new Vector2(this.topLeft.x + (size.x/2), this.topLeft.y + (size.y/2));
 	this.bottomRight = new Vector2(this.topLeft.x + this.size.x,this.topLeft.y+this.size.y);
+
+	this.topRight = new Vector2(this.bottomRight.x, this.topLeft.y);
+	this.bottomLeft = new Vector2(this.topLeft.x, this.bottomRight.y);
+	
 	this.update = function(topLeft,size){
 		this.topLeft = topLeft;
 		if(size!== undefined)

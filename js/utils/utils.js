@@ -154,14 +154,14 @@ function segmentIntersectCircle2(segment,circle)
 
 function segmentsIntersectionVector2(line1, line2)
 {
-  var x1 = line1.begin.x;
-  var x2 = line1.end.x;
-  var y1 = line1.begin.y;
-  var y2 = line1.end.y;
-  var x3 = line2.begin.x;
-  var x4 = line2.end.x;
-  var y3 = line2.begin.y;
-  var y4 = line2.end.y;
+  var x1 = +line1.begin.x.toFixed(2);
+  var x2 = +line1.end.x.toFixed(2);
+  var y1 = +line1.begin.y.toFixed(2);
+  var y2 = +line1.end.y.toFixed(2);
+  var x3 = +line2.begin.x.toFixed(2);
+  var x4 = +line2.end.x.toFixed(2);
+  var y3 = +line2.begin.y.toFixed(2);
+  var y4 = +line2.end.y.toFixed(2);
 
   var d = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
   if(d == 0)
