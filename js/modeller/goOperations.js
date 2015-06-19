@@ -101,6 +101,47 @@ SCG2.modeller.restrictionCheck = function(placeHolder, module){
 	return false;
 }
 
+SCG2.modeller.wholeGoRestrictionCheck = function()
+{
+	if(SCG2.modeller.go.modules.length < 2)
+	{
+		return;
+	}
+
+	for(var mi = 0; mi < SCG2.modeller.go.modules.length; mi++)
+	{
+		var module = SCG2.modeller.go.modules[mi];
+		var rp = undefined;
+		if(module.component && module.component.restrictionPoligon){
+			rp = module.component.restrictionPoligon.clone();
+		}
+		else if(module.restrictionPoligon)
+		{
+			rp = module.restrictionPoligon.clone();
+		}
+
+		if(!rp)
+		{
+			continue;
+		}
+
+		rp.update(module.position, module.angle);
+		for(var mi2 = 0; mi2 < SCG2.modeller.go.modules.length; mi2++)
+		{
+			var module2 = SCG2.modeller.go.modules[mi2];
+			if(module == module2) { continue; } // self ignore
+			for(var cpi = 0; cpi < module2.cornerPoints.length; cpi++)
+			{
+				var absCornerPoint = module2.cornerPoints[cpi].add(module2.position,true);
+				if(rp.isPointInside(absCornerPoint))
+				{
+					console.log("module inside rp");
+				}
+			}
+		}
+	}
+}
+
 SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phCollection){
 	for (var i = SCG2.modeller.go.modules.length - 1; i >= 0; i--) {
 		if(placeHolder.position.x >= SCG2.modeller.go.modules[i].position.x - SCG2.modeller.go.modules[i].size.x/2 && placeHolder.position.x <= SCG2.modeller.go.modules[i].position.x + SCG2.modeller.go.modules[i].size.x/2 &&

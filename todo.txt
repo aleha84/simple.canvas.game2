@@ -22,7 +22,8 @@
 
 //modeller todo
 + restriction poligon
+- restriction poligon and modules intersection
 - save go
 - load go
-- external components
++ external components
 - selected module info
