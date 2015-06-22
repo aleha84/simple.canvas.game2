@@ -103,6 +103,7 @@ SCG2.modeller.restrictionCheck = function(placeHolder, module){
 
 SCG2.modeller.wholeGoRestrictionCheck = function()
 {
+	SCG2.modeller.go.stats.modulesInRestictedZones = false; 
 	if(SCG2.modeller.go.modules.length < 2)
 	{
 		return;
@@ -135,7 +136,7 @@ SCG2.modeller.wholeGoRestrictionCheck = function()
 				var absCornerPoint = module2.cornerPoints[cpi].add(module2.position,true);
 				if(rp.isPointInside(absCornerPoint))
 				{
-					console.log("module inside rp");
+					SCG2.modeller.go.stats.modulesInRestictedZones = true;
 				}
 			}
 		}
@@ -266,13 +267,14 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 		//center.add(defaultDirection.mul(15));
 		var rp = new Poligon({ vertices: [
 				center,
-				defaultDirection.rotate(-45,false,false).mul(100).add(center,true),
-				defaultDirection.rotate(45,false,false).mul(100).add(center,true),
+				defaultDirection.rotate(-45,false,false).mul(1000).add(center,true),
+				defaultDirection.rotate(45,false,false).mul(1000).add(center,true),
 			], renderOptions : { fill: true}})
 	}
 	module.restrictionPoligon = rp;
 	SCG2.modeller.go.addModule(module, isInternal);
 	SCG2.modeller.findDisconnectedModules();
+	SCG2.modeller.wholeGoRestrictionCheck();
 }
 
 SCG2.modeller.loadPredefined = function(){

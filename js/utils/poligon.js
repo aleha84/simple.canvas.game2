@@ -3,6 +3,13 @@ function Poligon(init)
 	this.vertices = init.vertices;
 	this.renderOptions = init.renderOptions;
 
+	this.defaults = {
+		fillStyle : 'rgba(255, 255, 0, 0.5)',
+		strokeStyle : '#FF0000',
+		lineWidth : 2,
+		fill : false
+	}
+
 	if(this.vertices.length < 3)
 	{
 		throw 'Poligon -> vertices lenght mustbe >= 3';
@@ -15,20 +22,39 @@ function Poligon(init)
 
 	if(!this.renderOptions.fillStyle)
 	{
-		this.renderOptions.fillStyle = 'rgba(255, 255, 0, 0.5)';
+		this.renderOptions.fillStyle = this.defaults.fillStyle;
+	}
+	else{
+		this.defaults.fillStyle = this.renderOptions.fillStyle;
 	}
 	if(!this.renderOptions.lineWidth)
 	{
-		this.renderOptions.lineWidth = 2;
+		this.renderOptions.lineWidth = this.defaults.lineWidth;
+	}
+	else{
+		this.defaults.lineWidth = this.renderOptions.lineWidth;
 	}
 	if(!this.renderOptions.strokeStyle)
 	{
-		this.renderOptions.strokeStyle = '#FF0000';
+		this.renderOptions.strokeStyle = this.defaults.strokeStyle;
+	}
+	else{
+		this.defaults.strokeStyle = this.renderOptions.strokeStyle;
 	}
 
 	if(!this.renderOptions.fill)
 	{
-		this.renderOptions.fill = false;
+		this.renderOptions.fill = this.defaults.fill;
+	}
+	else{
+		this.defaults.fill = this.renderOptions.fill;
+	}
+
+	this.resetToDefaults = function(){
+		this.renderOptions.fillStyle = this.defaults.fillStyle;
+		this.renderOptions.strokeStyle = this.defaults.strokeStyle;
+		this.renderOptions.lineWidth = this.defaults.lineWidth;
+		this.renderOptions.fill = this.defaults.fill;
 	}
 
 	this.clone = function(){

@@ -229,7 +229,7 @@ SCG2.modeller.componentBlockSelect = function(event){
 		}
 		
 	}
-
+	SCG2.modeller.wholeGoRestrictionCheck();
 	SCG2.modeller.selectedModule.unselect();
 }
 
@@ -352,6 +352,7 @@ SCG2.modeller.showNotifications = function(){
 			commandRoom:{message:'No command room', state: 'fatal', show: !SCG2.modeller.go.stats.commandRoom || SCG2.modeller.go.stats.commandRoom == 0},
 			disconnected:{message:'Modules disconnected', state: 'fatal',show: SCG2.modeller.go.stats.disconnectedModules},
 			thruster:{message:'Ship is static', state: 'warning',show: !SCG2.modeller.go.stats.speed},
+			restrictionIntersections:{message:'Some modules in restriction zones', state: 'fatal',show: SCG2.modeller.go.stats.modulesInRestictedZones},
 		};
 
 	var rowShiftY = 40;
@@ -416,4 +417,29 @@ SCG2.modeller.findDisconnectedModules = function(){
 	};
 
 	SCG2.modeller.go.stats.disconnectedModules = disconnectedModules.length > 0;
+}
+
+SCG2.modeller.restrictionPoligonMouseInteractions = function(module){
+	var mp = SCG2.gameControls.mousestate.position;
+	var rp = module.restrictionPoligon.clone();
+	rp.update(module.position, module.angle);
+
+	var nearPoligon = false;
+
+	for(var vi = 0;vi<rp.vertices.length;vi++)
+	{
+		if(isBetween(mp.x,rp.vertices[vi].x, rp.vertices[(vi == rp.vertices.length - 1)?0:vi].x) 
+			&& isBetween(mp.y,rp.vertices[vi].y, rp.vertices[(vi == rp.vertices.length - 1)?0:vi].y))
+		{
+			nearPoligon = true;
+			break;
+		}
+	}
+
+	if(nearPoligon){
+		module.restrictionPoligon.renderOptions.fillStyle = 'rgba(255, 0, 0, 0.5)';
+	}
+	else{
+		module.restrictionPoligon.resetToDefaults();
+	}
 }

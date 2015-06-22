@@ -78,6 +78,11 @@ SCG2.gameControls = {
             this.middleButtonDown = false;
 		}
 	},
+	keyboardstate: {
+		altPressed : false,
+		shiftPressed : false,
+		ctrlPressed: false
+	},
 	selectedGOs : [],
 	camera: {
 		mode: 'free',
@@ -163,18 +168,24 @@ SCG2.gameControls = {
 		rotateRight: false,
 	},
 	disableControlsEvents: function(){
-		$(document).off('keydown');
-		$(document).off('keyup');
+		var that = this;
+		$(document).off('keydown',that.keyDown);
+		$(document).off('keyup',that.keyUp);
 		$(SCG2.canvas).off();
+	},
+	permanentEventInit : function (){
+		var that = this;
+		$(document).on('keydown',function(e){
+			that.permanentKeyDown(e);
+		});
+		$(document).on('keyup',function(e){
+			that.permanentKeyUp(e);
+		});
 	},
 	initControlsEvents: function  () {
 		var that = this;
-		$(document).on('keydown',function(e){
-			that.keyDown(e);
-		})
-		$(document).on('keyup',function(e){
-			that.keyUp(e);
-		});
+		$(document).on('keydown',$.proxy(that.keyDown,that));
+		$(document).on('keyup',$.proxy(that.keyUp,that));
 		$(SCG2.canvas).on('mousedown',function(e){
 			that.mouseDown(e);
 		});
@@ -308,6 +319,18 @@ SCG2.gameControls = {
 			};
 		}
 	},
+	permanentKeyDown : function (event)
+	{
+		this.keyboardstate.shiftPressed =event.shiftKey;
+		this.keyboardstate.ctrlPressed =event.ctrlKey;
+		this.keyboardstate.altPressed =event.altKey;
+	},
+	permanentKeyUp : function (event)
+	{
+		this.keyboardstate.shiftPressed =event.shiftKey;
+		this.keyboardstate.ctrlPressed =event.ctrlKey;
+		this.keyboardstate.altPressed =event.altKey;
+	},
 	keyDown: function (event) {
 		switch(event.which)
 		{
@@ -375,4 +398,6 @@ SCG2.gameControls = {
 		}
 	}
 }
+
+SCG2.gameControls.permanentEventInit();
 

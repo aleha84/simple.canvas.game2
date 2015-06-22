@@ -114,6 +114,11 @@ SCG2.Module.Module.prototype = {
 			this.screenBox = undefined;
 		}
 
+		if(SCG2.modeller.options.isActive && this.restrictionPoligon && SCG2.gameControls.keyboardstate.ctrlPressed) // update for module restriction poligon
+		{
+			SCG2.modeller.restrictionPoligonMouseInteractions(this);
+		}
+
 		if(SCG2.gameLogics.isPaused /*|| (SCG2.gameLogics.isPaused && SCG2.gameLogics.isPausedStep)*/ || SCG2.gameLogics.gameOver || SCG2.modeller.options.isActive)
 		{
 			return;
