@@ -420,26 +420,46 @@ SCG2.modeller.findDisconnectedModules = function(){
 }
 
 SCG2.modeller.restrictionPoligonMouseInteractions = function(module){
-	var mp = SCG2.gameControls.mousestate.position;
+	var mp = SCG2.gameControls.mousestate.position.substract(new Vector2(SCG2.battlefield.default.width/2,SCG2.battlefield.default.height/2),true);
 	var rp = module.restrictionPoligon.clone();
 	rp.update(module.position, module.angle);
 
-	var nearPoligon = false;
+	var distance = undefined;
 
-	for(var vi = 0;vi<rp.vertices.length;vi++)
+	if(SCG2.gameControls.keyboardstate.altPressed)
 	{
-		if(isBetween(mp.x,rp.vertices[vi].x, rp.vertices[(vi == rp.vertices.length - 1)?0:vi].x) 
-			&& isBetween(mp.y,rp.vertices[vi].y, rp.vertices[(vi == rp.vertices.length - 1)?0:vi].y))
-		{
-			nearPoligon = true;
-			break;
+		debugger;
+	}
+
+	if(isBetween(mp.x,rp.vertices[0].x, rp.vertices[1].x) 
+			&& isBetween(mp.y,rp.vertices[0].y, rp.vertices[1].y))
+	{
+		distance = { 
+			endpointIndex: 1, 
+			length: distToSegment(mp, rp.vertices[0], rp.vertices[1])
+		};
+	}
+
+	if(isBetween(mp.x,rp.vertices[0].x, rp.vertices[2].x) 
+			&& isBetween(mp.y,rp.vertices[0].y, rp.vertices[2].y))
+	{
+		var _distance = 
+		{ 
+			endpointIndex: 2, 
+			length: distToSegment(mp, rp.vertices[0], rp.vertices[2])
+		};
+
+		if((distance && distance.length > _distance.length) || distance == undefined){
+			distance = _distance;
 		}
 	}
 
-	if(nearPoligon){
+	if(distance && distance.length < 20){
 		module.restrictionPoligon.renderOptions.fillStyle = 'rgba(255, 0, 0, 0.5)';
+		$(SCG2.canvas).css({'cursor': 'hand'});
 	}
 	else{
 		module.restrictionPoligon.resetToDefaults();
+		$(SCG2.canvas).css({'cursor': 'default'});
 	}
 }
