@@ -19,22 +19,65 @@ SCG2.modeller.options = {
 		$(SCG2.canvas).on('mouseup',function(e){				
 			that.controls.mouseUp(e);
 		});
+		$(SCG2.canvas).on('mousedown',function(e){
+			that.controls.mouseDown(e);
+		});
 	},
 	disableControlsEvents: function(){
 		$(SCG2.canvas).off();
 	},
 	controls: {
 		mouseMove:function(event){
+			clearTimeout(SCG2.gameControls.mousestate.timer);
+
+			var oldPosition = SCG2.gameControls.mousestate.position.clone();
 			SCG2.modeller.currentPlaceHolder = undefined;
 			absorbTouchEvent(event);
 			var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
 			var eventPos = pointerEventToXY(event);
 			SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
+			SCG2.gameControls.mousestate.delta = SCG2.gameControls.mousestate.position.substract(oldPosition,true);
+
+			SCG2.gameControls.mousestate.timer = setTimeout(SCG2.gameControls.mousestate.stopped, 50);
 		},
 		mouseOut:function(event){
 			//SCG2.gameControls.mousestate.position = undefined;
 		},
+		mouseDown: function(event){
+			switch (event.which) {
+		        case 1:
+		            SCG2.gameControls.mousestate.leftButtonDown = true;
+		            break;
+		        case 2:
+		            SCG2.gameControls.mousestate.middleButtonDown = true;
+		            break;
+		        case 3:
+		            SCG2.gameControls.mousestate.rightButtonDown = true;
+		            break;
+		        default:
+		            SCG2.gameControls.mousestate.reset();
+		            break;
+		    }
+		    //console.log(SCG2.gameControls.mousestate);
+		},
 		mouseUp: function(event){
+
+			switch (event.which) {
+		        case 1:
+		            SCG2.gameControls.mousestate.leftButtonDown = false;
+		            break;
+		        case 2:
+		            SCG2.gameControls.mousestate.middleButtonDown = false;
+		            break;
+		        case 3:
+		            SCG2.gameControls.mousestate.rightButtonDown = false;
+		            break;
+		        default:
+		            SCG2.gameControls.mousestate.reset();
+		            break;
+		    }
+		    //console.log(SCG2.gameControls.mousestate);
+
 			if(SCG2.modeller.options.moduleAdding){
 				if(SCG2.modeller.currentPlaceHolder){
 					SCG2.modeller.addModule(SCG2.modeller.currentPlaceHolder);
@@ -420,16 +463,19 @@ SCG2.modeller.findDisconnectedModules = function(){
 }
 
 SCG2.modeller.restrictionPoligonMouseInteractions = function(module){
+	if(!module.clamps){
+		return;
+	}
 	var mp = SCG2.gameControls.mousestate.position.substract(new Vector2(SCG2.battlefield.default.width/2,SCG2.battlefield.default.height/2),true);
 	var rp = module.restrictionPoligon.clone();
 	rp.update(module.position, module.angle);
-
+	var degreeAngle = radiansToDegree(module.angle);
 	var distance = undefined;
-
-	if(SCG2.gameControls.keyboardstate.altPressed)
-	{
-		debugger;
-	}
+	var ms = SCG2.gameControls.mousestate;
+	// if(SCG2.gameControls.keyboardstate.altPressed)
+	// {
+	// 	debugger;
+	// }
 
 	if(isBetween(mp.x,rp.vertices[0].x, rp.vertices[1].x) 
 			&& isBetween(mp.y,rp.vertices[0].y, rp.vertices[1].y))
@@ -454,12 +500,70 @@ SCG2.modeller.restrictionPoligonMouseInteractions = function(module){
 		}
 	}
 
-	if(distance && distance.length < 20){
+	if(distance && distance.length < 10){
+		var shiftInrads = undefined;
 		module.restrictionPoligon.renderOptions.fillStyle = 'rgba(255, 0, 0, 0.5)';
-		$(SCG2.canvas).css({'cursor': 'hand'});
+		$(SCG2.canvas).css({'cursor': 'move'});
+
+		if(ms.leftButtonDown && !ms.delta.equal(new Vector2)){
+			var clamps = { min: module.clamps.min, max: module.clamps.max};
+			var increase = false;
+			var decrease = false;
+			if(isBetween(degreeAngle,-45,45)){
+				if(ms.delta.x != 0){
+					shiftInrads = degreeToRadians(ms.delta.x)
+				}
+			}
+			else if(isBetween(degreeAngle,45,135)){
+				if( ms.delta.y != 0){
+					shiftInrads = degreeToRadians(ms.delta.y)
+				}
+			} if((isBetween(degreeAngle,135,225) || isBetween(degreeAngle,-135,-225))){
+				if(ms.delta.x != 0){
+					shiftInrads = degreeToRadians(ms.delta.x)
+				}
+			} if(isBetween(degreeAngle,-45,-135)){
+				if( ms.delta.y != 0){
+					shiftInrads = -degreeToRadians(ms.delta.y)
+				}
+			}
+
+			if(shiftInrads){
+
+			if(distance.endpointIndex == 1){
+				clamps.min+=shiftInrads;
+			}
+			else if(distance.endpointIndex == 2){
+				clamps.max+=shiftInrads;
+			}
+
+				module.updateClamps(clamps.min,clamps.max,true);
+			}
+		}
 	}
 	else{
 		module.restrictionPoligon.resetToDefaults();
 		$(SCG2.canvas).css({'cursor': 'default'});
 	}
+}
+
+SCG2.modeller.updateClamps = function(min, max, inRadians){
+	if(inRadians === undefined){
+		inRadians = false;
+	}
+	var _default = (max - min)/2;
+	this.clamps = {
+		min : inRadians? min : degreeToRadians(min), 
+		max : inRadians? max : degreeToRadians(max), 
+		default : inRadians? _default : degreeToRadians(_default) };
+
+	var defaultDirection = Vector2.up();
+
+	var center = new Vector2;
+
+	this.restrictionPoligon = new Poligon({ vertices: [
+				center,
+				defaultDirection.rotate(min,inRadians,false).mul(1000).add(center,true),
+				defaultDirection.rotate(max,inRadians,false).mul(1000).add(center,true),
+			], renderOptions : { fill: true}});
 }

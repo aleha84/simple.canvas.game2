@@ -303,3 +303,9 @@ function distToSegmentSquared(p, v, w) {
                     y: v.y + t * (w.y - v.y) });
 }
 function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+
+function getDegreeToVectorUp(p1, p2){
+  var up = Vector2.up();
+  var v1 = p2.substract(p1,true);
+  return  Math.acos((v1.mulVector(up))/(v1.module()*up.module()));
+}

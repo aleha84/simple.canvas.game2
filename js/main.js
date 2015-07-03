@@ -69,6 +69,10 @@ $(document).ready(function(){
 		
 	}
 	
+	if(SCG2.debugger.show){
+		SCG2.debugger.el = $('.debugger');
+	}
+
 	SCG2.battlefield.current = new Box(new Vector2,new Vector2(SCG2.battlefield.width,SCG2.battlefield.height));
 
 	
@@ -180,5 +184,10 @@ SCG2.draw = function(){
 
 	if(SCG2.modeller.options.isActive){
 		SCG2.modeller.showNotifications();
+	}
+
+	if(SCG2.debugger.show){
+
+		SCG2.debugger.el.html(String.format("delta : {0}", SCG2.gameControls.mousestate.delta.toString()))
 	}
 }

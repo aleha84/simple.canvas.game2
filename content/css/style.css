@@ -43,3 +43,11 @@
 	text-align: center;
   	padding: 2px 0px;
 }
+
+.debugger{
+	position: absolute;
+	top:0;
+	right: 0;
+	width:200px;
+	font-size:8px;
+}

@@ -15,6 +15,12 @@ SCG2.battleSpace = {
 	height: 1536
 }
 
+SCG2.debugger = 
+{
+	show: true,
+	el: undefined
+}
+
 SCG2.canvas = undefined;
 SCG2.context = undefined;
 SCG2.gameLogics = {
@@ -69,13 +75,18 @@ SCG2.gameControls = {
 	},
 	mousestate : {
 		position: new Vector2,
+		delta: new Vector2,
 		leftButtonDown: false,
 		rightButtonDown: false,
 		middleButtonDown: false,
+		timer : undefined,
 		reset: function(){
 			this.leftButtonDown = false;
             this.rightButtonDown = false;
             this.middleButtonDown = false;
+		},
+		stopped : function(){
+			SCG2.gameControls.mousestate.delta = new Vector2;
 		}
 	},
 	keyboardstate: {
@@ -239,11 +250,13 @@ SCG2.gameControls = {
 	{
 		var oldPosition = SCG2.gameControls.mousestate.position.clone();
 
+		clearTimeout(SCG2.gameControls.mousestate.timer);
+
 		absorbTouchEvent(event);
 		var posX = $(SCG2.canvas).offset().left, posY = $(SCG2.canvas).offset().top;
 		var eventPos = pointerEventToXY(event);
 		SCG2.gameControls.mousestate.position = new Vector2(eventPos.x - posX,eventPos.y - posY);
-
+		SCG2.gameControls.mousestate.delta = SCG2.gameControls.mousestate.position.substract(oldPosition,true);
 		if(SCG2.gameControls.mousestate.rightButtonDown)
 		{
 			var delta = oldPosition.directionNonNormal(SCG2.gameControls.mousestate.position);
@@ -280,6 +293,7 @@ SCG2.gameControls = {
 			}	
 		}
 		
+		SCG2.gameControls.mousestate.timer = setTimeout(SCG2.gameControls.mousestate.stopped, 50);
 	},
 	mouseUp: function(event){
 		switch (event.which) {

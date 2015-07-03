@@ -169,8 +169,9 @@ SCG2.modeller.checkPlaceHolderExistenceByPosition = function(placeHolder, phColl
 SCG2.modeller.addModule = function(currentPlaceHolder){
 	var isInternal = currentPlaceHolder.moduleId.indexOf('internal') != -1;
 	var module = new SCG2.Module.Module($.extend(true,{position:currentPlaceHolder.position},SCG2.modeller.modules[currentPlaceHolder.moduleId]));
-	var clamps = {min : 0, max: 0, default : 0 } //degreeToRadians
-	var defaultDirection = undefined;
+	var clamps = {min : degreeToRadians(-45), max : degreeToRadians(45), default : degreeToRadians(0) }; //degreeToRadians
+	var defaultDirection =  Vector2.up();
+	var moduleAngle = 0;
 	if(currentPlaceHolder.siblings !== undefined){
 		for (var i = currentPlaceHolder.siblings.length - 1; i >= 0; i--) {
 			
@@ -185,8 +186,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.above = module;
 						module.connectionOuterLink = {below: currentPlaceHolder.siblings[i].sibling};
-						clamps = {min : degreeToRadians(-45), max : degreeToRadians(45), default : degreeToRadians(0) };
-						defaultDirection = Vector2.up();
+						//clamps = {min : degreeToRadians(-45), max : degreeToRadians(45), default : degreeToRadians(0) };
+						//defaultDirection = Vector2.up();
+						moduleAngle = degreeToRadians(0);
 					}
 					
 					break;
@@ -200,8 +202,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.below = module;
 						module.connectionOuterLink = {above: currentPlaceHolder.siblings[i].sibling};
-						clamps = {min : degreeToRadians(135), max : degreeToRadians(225), default : degreeToRadians(180) };
-						defaultDirection = Vector2.down();
+						// clamps = {min : degreeToRadians(135), max : degreeToRadians(225), default : degreeToRadians(180) };
+						// defaultDirection = Vector2.down();
+						moduleAngle = degreeToRadians(180);
 					}
 					break;
 				case 'left':
@@ -214,8 +217,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.left = module;
 						module.connectionOuterLink = {right: currentPlaceHolder.siblings[i].sibling};	
-						clamps = {min : degreeToRadians(-135), max : degreeToRadians(-45), default : degreeToRadians(-90) };
-						defaultDirection = Vector2.left();
+						// clamps = {min : degreeToRadians(-135), max : degreeToRadians(-45), default : degreeToRadians(-90) };
+						// defaultDirection = Vector2.left();
+						moduleAngle = degreeToRadians(-90);
 					}
 					break;
 				case 'right':
@@ -228,8 +232,9 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 					else{
 						currentPlaceHolder.siblings[i].sibling.connectionOuterLinks.right = module;
 						module.connectionOuterLink = {left: currentPlaceHolder.siblings[i].sibling};	
-						clamps = {min : degreeToRadians(45), max : degreeToRadians(135), default : degreeToRadians(90) };	
-						defaultDirection = Vector2.right();
+						// clamps = {min : degreeToRadians(45), max : degreeToRadians(135), default : degreeToRadians(90) };	
+						// defaultDirection = Vector2.right();
+						moduleAngle = degreeToRadians(90);
 					}
 					break;
 				case 'center':
@@ -239,17 +244,21 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 						var sc = currentPlaceHolder.siblings[i].sibling.connectionOuterLinksBase;
 						var nVector = new Vector2;
 						if(sc.above.equal(nVector) && sc.left.equal(nVector)) {
-							clamps = {min : degreeToRadians(-90), max : degreeToRadians(0), default : degreeToRadians(-45) };	
-							defaultDirection = Vector2.up().rotate(-45,false,true);
+							//clamps = {min : degreeToRadians(-90), max : degreeToRadians(0), default : degreeToRadians(-45) };	
+							//defaultDirection = Vector2.up().rotate(-45,false,true);
+							moduleAngle = degreeToRadians(-45);
 						} else if(sc.above.equal(nVector) && sc.right.equal(nVector)) {
-							clamps = {min : degreeToRadians(0), max : degreeToRadians(90), default : degreeToRadians(45) };	
-							defaultDirection = Vector2.up().rotate(45,false,true);
+							//clamps = {min : degreeToRadians(0), max : degreeToRadians(90), default : degreeToRadians(45) };	
+							//defaultDirection = Vector2.up().rotate(45,false,true);
+							moduleAngle = degreeToRadians(45);
 						} else if(sc.below.equal(nVector) && sc.left.equal(nVector)) {
-							clamps = {min : degreeToRadians(-180), max : degreeToRadians(-90), default : degreeToRadians(-135) };	
-							defaultDirection = Vector2.down().rotate(45,false,true);
+							//clamps = {min : degreeToRadians(-180), max : degreeToRadians(-90), default : degreeToRadians(-135) };	
+							//defaultDirection = Vector2.down().rotate(45,false,true);
+							moduleAngle = degreeToRadians(-135);
 						} else if(sc.below.equal(nVector) && sc.right.equal(nVector)) {
-							clamps = {min : degreeToRadians(90), max : degreeToRadians(180), default : degreeToRadians(135) };	
-							defaultDirection = Vector2.down().rotate(-45,false,true);
+							//clamps = {min : degreeToRadians(90), max : degreeToRadians(180), default : degreeToRadians(135) };	
+							//defaultDirection = Vector2.down().rotate(-45,false,true);
+							moduleAngle = degreeToRadians(135);
 						}
 					}
 				default:
@@ -261,7 +270,8 @@ SCG2.modeller.addModule = function(currentPlaceHolder){
 
 	if(!isInternal){
 		module.clamps = clamps;
-		module.angle = clamps.default;
+		module.updateClamps = $.proxy(SCG2.modeller.updateClamps, module);
+		module.angle = moduleAngle;
 		var center = new Vector2;
 		defaultDirection = Vector2.up();
 		//center.add(defaultDirection.mul(15));

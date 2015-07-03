@@ -129,6 +129,10 @@ function Vector2(x,y){
 
 		return this.x == to.x && this.y == to.y;
 	}
+
+	this.toString = function(){
+		return String.format("x: {0}, y:{1}", this.x,this.y);
+	}
 }
 
 Vector2.left = function(){
